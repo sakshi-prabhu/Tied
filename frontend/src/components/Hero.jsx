@@ -1,10 +1,10 @@
-import tiedHero from "../assets/tiedHero.png";
+import HeroPreview from "./HeroPreview.jsx";
 import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
     <div id="home"
-      className="flex items-center justify-between gap-8 px-5 py-20 text-white "
+      className="flex flex-col md:flex-row items-center justify-between gap-8 px-5 pt-28 pb-12 text-white"
       style={{ backgroundColor: "#112034" }}
     >
       <div className="flex-1 text-left">
@@ -33,11 +33,7 @@ const Hero = () => {
         </div>
       </div>
 
-      <img
-        src={tiedHero}
-        alt="Tied Hero"
-        className="h-90 w-auto max-w-full rounded-2xl my-8"
-      />
+      <HeroPreview />
     </div>
   );
 };
