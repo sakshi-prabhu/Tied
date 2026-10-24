@@ -24,12 +24,15 @@ const Hero = () => {
           >
             GET STARTED
           </Link>
-          <button className="flex items-center gap-2 text-white/90 font-medium border border-white/30 hover:bg-white/10 py-2 px-4 rounded-2xl">
+          <a
+            href="#how-it-works"
+            className="flex items-center gap-2 text-white/90 font-medium border border-white/30 hover:bg-white/10 py-2 px-4 rounded-2xl"
+          >
             See How It Works
             <span className="material-symbols-outlined flex h-6 w-6 items-center justify-center ">
               play_arrow
             </span>
-          </button>
+          </a>
         </div>
       </div>
 

@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Footer = () => {
   return (
     <footer className=" text-white py-10"style={{ backgroundColor: "#112034" }}>
@@ -13,19 +15,19 @@ const Footer = () => {
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-teal-300 mb-4">Explore</p>
             <ul className="space-y-2 text-sm text-gray-300">
-              <li>Home</li>
-              <li>Features</li>
-              <li>How It Works</li>
-              <li>FAQ</li>
+              <li><a href="#home" className="hover:text-white">Home</a></li>
+              <li><a href="#features" className="hover:text-white">Features</a></li>
+              <li><a href="#how-it-works" className="hover:text-white">How It Works</a></li>
+              <li><a href="#faq" className="hover:text-white">FAQ</a></li>
             </ul>
           </div>
 
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-teal-300 mb-4">Get Started</p>
             <ul className="space-y-2 text-sm text-gray-300">
-              <li>Get Started</li>
-              <li>Login</li>
-              <li>Create Your Tied</li>
+              <li><Link to="/signup" className="hover:text-white">Get Started</Link></li>
+              <li><Link to="/signin" className="hover:text-white">Login</Link></li>
+              <li><Link to="/signup" className="hover:text-white">Create Your Tied</Link></li>
             </ul>
           </div>
         </div>

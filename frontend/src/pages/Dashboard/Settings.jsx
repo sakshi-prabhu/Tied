@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const Settings = () => {
   return (
     <div>
@@ -123,9 +125,9 @@ const Settings = () => {
               </p>
             </div>
 
-            <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100">
+            <Link to="/signin" className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 text-center">
               Sign Out
-            </button>
+            </Link>
 
           </div>
 

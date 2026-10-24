@@ -1,7 +1,9 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import tiedImage from "../assets/tied.jpeg";
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-6">
       <div className="w-full max-w-md">
@@ -89,6 +91,7 @@ const SignUp = () => {
           {/* Sign Up Button */}
           <button
             type="button"
+            onClick={() => navigate("/dashboard")}
             className="w-full bg-teal-600 text-white py-3 rounded-lg font-bold hover:bg-teal-700 transition"
           >
             Create Account
@@ -108,6 +111,7 @@ const SignUp = () => {
           {/* Google */}
           <button
             type="button"
+            onClick={() => navigate("/dashboard")}
             className="w-full border border-gray-300 py-3 rounded-lg font-medium text-gray-700 hover:bg-teal-50 transition"
           >
             Continue with Google
