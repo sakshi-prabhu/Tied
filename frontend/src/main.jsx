@@ -17,6 +17,9 @@ import Appearance from "./pages/Dashboard/Appearance.jsx";
 import Analytics from "./pages/Dashboard/Analytics.jsx";
 import Settings from "./pages/Dashboard/Settings.jsx";
 
+import { AuthProvider } from "./context/AuthContext.jsx";
+import { ProtectedRoute, GuestRoute } from "./components/ProtectedRoute.jsx";
+
 export const App = () => {
   return (
     <Routes>
@@ -24,11 +27,18 @@ export const App = () => {
       <Route path="/" element={<LandingPage />} />
 
 
-      <Route path="/signin" element={<SignIn />} />
-      <Route path="/signup" element={<SignUp />} />
+      <Route path="/signin" element={<GuestRoute><SignIn /></GuestRoute>} />
+      <Route path="/signup" element={<GuestRoute><SignUp /></GuestRoute>} />
 
 
-      <Route path="/dashboard" element={<DashboardLayout />}>
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
         <Route index element={<Overview />} />
 
         <Route path="mylinks" element={<MyLink />} />
@@ -46,8 +56,10 @@ export const App = () => {
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
   </StrictMode>
 );

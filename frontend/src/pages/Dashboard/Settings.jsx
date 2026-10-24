@@ -1,6 +1,15 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase/firebaseConfig.js";
 
 const Settings = () => {
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut(auth);
+    navigate("/signin");
+  };
+
   return (
     <div>
 
@@ -125,9 +134,13 @@ const Settings = () => {
               </p>
             </div>
 
-            <Link to="/signin" className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 text-center">
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+            >
               Sign Out
-            </Link>
+            </button>
 
           </div>
 
