@@ -3,8 +3,8 @@ import tiedImage from "../assets/tied.jpeg";
 
 const SignIn = () => {
   return (
-    <div className="h-screen overflow-hidden bg-gray-50 flex items-center justify-center px-4 py-8">
-      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border-t-4 border-teal-600">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8">
+      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md border-t-4 border-teal-600">
 
         <div className="text-center mb-8">
           <img src={tiedImage} alt="Tied logo" className="w-16 h-16 rounded-xl object-cover mx-auto" />

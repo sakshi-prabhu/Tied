@@ -3,7 +3,7 @@ import tiedImage from "../assets/tied.jpeg";
 
 const SignUp = () => {
   return (
-    <div className="h-screen overflow-hidden bg-gray-50 flex items-center justify-center px-4 py-6">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-6">
       <div className="w-full max-w-md">
 
         {/* Logo */}
@@ -15,7 +15,7 @@ const SignUp = () => {
         </div>
 
         {/* Card */}
-        <div className="bg-white border-t-4 border-teal-600 rounded-2xl shadow-2xl p-8 max-h-[calc(100vh-11rem)] overflow-y-auto">
+        <div className="bg-white border-t-4 border-teal-600 rounded-2xl shadow-2xl p-6 sm:p-8">
 
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">
             Create Account

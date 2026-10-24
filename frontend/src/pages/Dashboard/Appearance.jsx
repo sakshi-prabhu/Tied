@@ -19,7 +19,7 @@ const Appearance = () => {
 
 
         {/* Customization Panel */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
 
           <h2 className="text-xl font-semibold text-gray-900">
             Customize Profile
@@ -93,7 +93,7 @@ const Appearance = () => {
               Theme
             </label>
 
-            <div className="flex gap-3 mt-3">
+            <div className="flex flex-wrap gap-3 mt-3">
 
               <button className="px-4 py-2 rounded-lg border-2 border-slate-800 bg-white">
                 Light
@@ -119,7 +119,7 @@ const Appearance = () => {
               Button Style
             </label>
 
-            <div className="flex gap-3 mt-3">
+            <div className="flex flex-wrap gap-3 mt-3">
 
               <button className="px-5 py-2 rounded-full border-2 border-slate-800">
                 Rounded
@@ -147,9 +147,9 @@ const Appearance = () => {
 
 
         {/* Preview */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
 
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
             <div>
               <h2 className="text-xl font-semibold text-gray-900">
@@ -171,7 +171,7 @@ const Appearance = () => {
           {/* Phone Preview */}
           <div className="flex justify-center mt-8">
 
-            <div className="w-[300px] min-h-[520px] bg-slate-900 rounded-[2rem] p-3 shadow-xl">
+            <div className="w-full max-w-75 min-h-130 bg-slate-900 rounded-[2rem] p-3 shadow-xl">
 
               <div className="bg-white rounded-[1.5rem] min-h-[494px] p-6">
 

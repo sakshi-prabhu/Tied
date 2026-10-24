@@ -35,7 +35,7 @@ const Settings = () => {
 
           <div className="flex mt-2">
 
-            <span className="bg-gray-100 border border-gray-200 border-r-0 rounded-l-lg px-4 py-3 text-gray-500">
+            <span className="bg-gray-100 border border-gray-200 border-r-0 rounded-l-lg px-3 sm:px-4 py-3 text-gray-500">
               tied.app/
             </span>
 
@@ -43,7 +43,7 @@ const Settings = () => {
               type="text"
               value="sakshi"
               readOnly
-              className="flex-1 p-3 border border-gray-200 rounded-r-lg bg-gray-50"
+              className="flex-1 min-w-0 p-3 border border-gray-200 rounded-r-lg bg-gray-50"
             />
 
           </div>
@@ -91,7 +91,7 @@ const Settings = () => {
         <div className="mt-6 space-y-4">
 
           {/* Change Password */}
-          <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg">
 
             <div>
               <h3 className="font-medium text-gray-900">
@@ -111,7 +111,7 @@ const Settings = () => {
 
 
           {/* Logout */}
-          <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg">
 
             <div>
               <h3 className="font-medium text-gray-900">
@@ -146,7 +146,7 @@ const Settings = () => {
         </p>
 
 
-        <div className="mt-6 flex items-center justify-between">
+        <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
 
           <div>
             <h3 className="font-medium text-gray-900">

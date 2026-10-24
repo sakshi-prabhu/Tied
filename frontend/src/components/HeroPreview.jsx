@@ -10,7 +10,7 @@ const links = [
 
 const HeroPreview = () => {
   return (
-    <div className="relative flex justify-center py-8 px-10">
+    <div className="relative flex justify-center py-8 px-4 sm:px-10">
 
       {/* Glow */}
       <div className="absolute inset-0 m-auto w-72 h-72 rounded-full bg-teal-500/30 blur-3xl"></div>

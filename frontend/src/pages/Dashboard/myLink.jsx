@@ -38,7 +38,7 @@ const MyLink = () => {
     <div>
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900">
@@ -63,11 +63,11 @@ const MyLink = () => {
         {links.map((link) => (
           <div
             key={link.id}
-            className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex items-center justify-between hover:shadow-md transition"
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:shadow-md transition"
           >
 
             {/* Left Side */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 min-w-0">
 
               {/* Drag Handle */}
               <div className="text-gray-400 cursor-grab text-xl">
@@ -80,12 +80,12 @@ const MyLink = () => {
               </div>
 
               {/* Link Information */}
-              <div>
+              <div className="min-w-0">
                 <h2 className="text-lg font-semibold text-gray-900">
                   {link.title}
                 </h2>
 
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 mt-1 truncate">
                   {link.url}
                 </p>
               </div>
@@ -94,7 +94,7 @@ const MyLink = () => {
 
 
             {/* Right Side */}
-            <div className="flex items-center gap-8">
+            <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-8 pl-9 sm:pl-0">
 
               {/* Clicks */}
               <div className="text-right">

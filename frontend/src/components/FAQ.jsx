@@ -57,7 +57,7 @@ const FAQ = () => {
             >
               <div
                 onClick={() => handleClick(index)}
-                className="p-6 flex justify-between items-center cursor-pointer"
+                className="p-4 sm:p-6 flex justify-between items-center cursor-pointer"
               >
                 <h3 className="text-lg font-semibold text-gray-900">
                   {index + 1}. {faq.question}
@@ -69,7 +69,7 @@ const FAQ = () => {
               </div>
 
               {openIndex === index && (
-                <div className="px-6 pb-6">
+                <div className="px-4 sm:px-6 pb-6">
                   <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
                 </div>
               )}

@@ -3,7 +3,7 @@ const Analytics = () => {
     <div>
 
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
         <div>
           <h1 className="text-3xl font-extrabold text-gray-900">
@@ -88,7 +88,7 @@ const Analytics = () => {
       {/* Main Chart */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 mt-6 p-6">
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
           <div>
             <h2 className="text-xl font-semibold text-gray-900">
@@ -135,7 +135,7 @@ const Analytics = () => {
         </div>
 
         {/* Dates */}
-        <div className="flex justify-between text-xs text-gray-400 mt-3">
+        <div className="flex justify-between gap-1 text-[10px] sm:text-xs text-gray-400 mt-3">
           <span>Aug 22</span>
           <span>Aug 23</span>
           <span>Aug 24</span>

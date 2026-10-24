@@ -1,6 +1,6 @@
 const Features = () => {
   return (
-   <div id="features" className="bg-slate-100 py-12">
+   <div id="features" className="bg-slate-100 py-12 px-6">
       <p className="text-sm font-semibold tracking-widest text-teal-600 text-center mt-3">
         EVERYTHING TIED TOGETHER
       </p>
@@ -14,7 +14,7 @@ const Features = () => {
         through one simple page.
       </p>
 
-      <div className="grid grid-cols-3 gap-6 px-5 py-10 text-black ">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 py-10 text-black">
        <div className="flex flex-col justify-center border border-gray-300 rounded-lg p-6 bg-white hover:shadow-2xl hover:-translate-y-1 hover:border-teal-300 transition-all duration-300">
           <p className="text-xs font-semibold uppercase tracking-widest text-teal-600 mb-3">Smart Sharing</p>
           <h3 className="text-lg font-bold mb-2 text-gray-900">
