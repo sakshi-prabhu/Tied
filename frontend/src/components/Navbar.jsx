@@ -22,19 +22,19 @@ const Navbar = () => {
 
         {/* Navigation */}
         <div className="absolute left-1/2 -translate-x-1/2 flex items-center space-x-28">
-          <a href="#home" className="hover:text-gray-300 italic">
+          <a href="#home" className="hover:text-gray-300 text-sm font-medium tracking-wide">
             Home
           </a>
 
-          <a href="#features" className="hover:text-gray-300 italic">
+          <a href="#features" className="hover:text-gray-300 text-sm font-medium tracking-wide">
             Features
           </a>
 
-          <a href="#how-it-works" className="hover:text-gray-300 italic">
+          <a href="#how-it-works" className="hover:text-gray-300 text-sm font-medium tracking-wide">
             How It Works
           </a>
 
-          <a href="#faq" className="hover:text-gray-300 italic">
+          <a href="#faq" className="hover:text-gray-300 text-sm font-medium tracking-wide">
             FAQ
           </a>
         </div>
@@ -43,7 +43,7 @@ const Navbar = () => {
         <div>
           <Link
             to="/signin"
-            className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-2xl"
+            className="bg-teal-600 hover:bg-teal-700 text-white font-semibold tracking-wide py-2 px-4 rounded-2xl"
           >
             GET STARTED
           </Link>

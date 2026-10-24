@@ -4,7 +4,7 @@ const Settings = () => {
 
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-extrabold text-gray-900">
           Settings
         </h1>
 

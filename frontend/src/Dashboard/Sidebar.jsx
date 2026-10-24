@@ -7,7 +7,7 @@ const Sidebar = () => {
         <li>
           <a
             href="#overview"
-            className="block p-3 text-lg rounded-lg hover:bg-gray-700 hover:text-gray-300"
+            className="block px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-gray-700 hover:text-gray-300"
           >
             Overview
           </a>
@@ -16,7 +16,7 @@ const Sidebar = () => {
         <li>
           <a
             href="#mylinks"
-            className="block p-3 text-lg rounded-lg hover:bg-gray-700 hover:text-gray-300"
+            className="block px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-gray-700 hover:text-gray-300"
           >
             My Links
           </a>
@@ -25,7 +25,7 @@ const Sidebar = () => {
         <li>
           <a
             href="#analytics"
-            className="block p-3 text-lg rounded-lg hover:bg-gray-700 hover:text-gray-300"
+            className="block px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-gray-700 hover:text-gray-300"
           >
             Analytics
           </a>
@@ -34,7 +34,7 @@ const Sidebar = () => {
         <li>
           <a
             href="#appearance"
-            className="block p-3 text-lg rounded-lg hover:bg-gray-700 hover:text-gray-300"
+            className="block px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-gray-700 hover:text-gray-300"
           >
             Appearance
           </a>
@@ -43,7 +43,7 @@ const Sidebar = () => {
         <li>
           <a
             href="#settings"
-            className="block p-3 text-lg rounded-lg hover:bg-gray-700 hover:text-gray-300"
+            className="block px-3 py-2.5 text-sm font-medium rounded-lg hover:bg-gray-700 hover:text-gray-300"
           >
             Settings
           </a>

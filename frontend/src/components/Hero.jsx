@@ -8,19 +8,19 @@ const Hero = () => {
       style={{ backgroundColor: "#112034" }}
     >
       <div className="flex-1 text-left">
-        <div className="text-sm uppercase tracking-wide px-10">
+        <p className="text-sm font-semibold uppercase tracking-widest text-teal-300 px-10">
           ONE WORKSPACE. EVERYTHING CONNECTED.
-        </div>
-        <div className="text-5xl font-bold px-10 mt-2">
+        </p>
+        <h1 className="text-4xl md:text-6xl font-extrabold leading-tight px-10 mt-3">
           Everything You Need. All Tied Together.
-        </div>
-        <div className="text-2xl px-10 mt-4">
+        </h1>
+        <p className="text-lg md:text-xl text-white/75 leading-relaxed max-w-xl px-10 mt-5">
          Bring your work, tools, and important information together in one organized workspace.
-        </div>
-        <div className="flex items-center gap-4 mt-6 px-10">
+        </p>
+        <div className="flex items-center gap-4 mt-8 px-10">
           <Link
             to="/signin"
-            className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-2xl"
+            className="bg-teal-600 hover:bg-teal-700 text-white font-semibold tracking-wide py-2 px-4 rounded-2xl"
           >
             GET STARTED
           </Link>

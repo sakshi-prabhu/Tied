@@ -44,7 +44,7 @@ const FAQ = () => {
     <section id="faq" className="bg-slate-100 py-10 px-6">
       <div className="max-w-7xl mx-auto">
     
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-gray-900 mb-10">
           Frequently Asked Questions
         </h2>
 
@@ -59,18 +59,18 @@ const FAQ = () => {
                 onClick={() => handleClick(index)}
                 className="p-6 flex justify-between items-center cursor-pointer"
               >
-                <h3 className="text-xl font-medium text-teal-600">
+                <h3 className="text-lg font-semibold text-gray-900">
                   {index + 1}. {faq.question}
                 </h3>
 
-                <span className="text-2xl font-bold text-teal-600 ml-4">
+                <span className="text-2xl font-medium text-teal-600 ml-4">
                   {openIndex === index ? "−" : "+"}
                 </span>
               </div>
 
               {openIndex === index && (
                 <div className="px-6 pb-6">
-                  <p className="text-gray-600">{faq.answer}</p>
+                  <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
                 </div>
               )}
             </div>

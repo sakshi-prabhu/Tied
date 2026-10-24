@@ -16,11 +16,11 @@ const HeroPreview = () => {
       <div className="absolute inset-0 m-auto w-72 h-72 rounded-full bg-teal-500/30 blur-3xl"></div>
 
       {/* Phone */}
-      <div className="relative w-[270px] bg-slate-950 rounded-[2.5rem] p-3 shadow-2xl border border-white/10">
-        <div className="bg-white rounded-[2rem] overflow-hidden">
+      <div className="relative w-67.5 bg-slate-950 rounded-[2.5rem] p-3 shadow-2xl border border-white/10">
+        <div className="bg-white rounded-4xl overflow-hidden">
 
           {/* Cover */}
-          <div className="h-20 bg-gradient-to-r from-teal-500 to-teal-700"></div>
+          <div className="h-20 bg-linear-to-r from-teal-500 to-teal-700"></div>
 
           <div className="px-5 pb-6 -mt-10 text-center">
 
