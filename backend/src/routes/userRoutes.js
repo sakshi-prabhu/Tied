@@ -1,10 +1,9 @@
 const express = require("express");
 const { User, Link, AnalyticsEvent, Avatar } = require("../models");
 const { verifyToken, requireProfile } = require("../middleware/auth");
+const { USERNAME_PATTERN, isReservedUsername } = require("../utils/username");
 
 const router = express.Router();
-
-const USERNAME_PATTERN = /^[a-z0-9_.]{3,30}$/;
 
 const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
@@ -19,7 +18,7 @@ const generateUsername = async (email) => {
   base = base.slice(0, 24).padEnd(3, "0");
 
   let candidate = base;
-  while (await User.exists({ username: candidate })) {
+  while (isReservedUsername(candidate) || (await User.exists({ username: candidate }))) {
     candidate = `${base}${Math.floor(1000 + Math.random() * 9000)}`;
   }
   return candidate;
@@ -33,8 +32,12 @@ router.get("/check-username/:username", async (req, res) => {
     return res.json({ available: false, reason: "invalid" });
   }
 
+  if (isReservedUsername(username)) {
+    return res.json({ available: false, reason: "reserved" });
+  }
+
   const taken = await User.exists({ username });
-  res.json({ available: !taken });
+  res.json({ available: !taken, reason: taken ? "taken" : undefined });
 });
 
 // Create the profile on first sign-in. Safe to call on every sign-in.

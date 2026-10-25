@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { isReservedUsername } = require("../utils/username");
 
 const userSchema = new mongoose.Schema(
   {
@@ -24,6 +25,10 @@ const userSchema = new mongoose.Schema(
       minlength: 3,
       maxlength: 30,
       match: [/^[a-z0-9_.]+$/, "Username can only contain letters, numbers, _ and ."],
+      validate: {
+        validator: (value) => !isReservedUsername(value),
+        message: "That username is reserved. Please choose another one.",
+      },
     },
     displayName: {
       type: String,

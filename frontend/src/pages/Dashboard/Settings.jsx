@@ -1,10 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deleteUser, sendPasswordResetEmail, signOut } from "firebase/auth";
 import { auth } from "../../firebase/firebaseConfig.js";
 import { getAuthErrorMessage } from "../../firebase/authErrors.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import api, { getApiErrorMessage } from "../../services/api.js";
+import { profileUrl, profileUrlPrefix, USERNAME_PATTERN } from "../../utils/profileUrl.js";
+
+const AVAILABILITY_MESSAGES = {
+  checking: { className: "text-gray-500 dark:text-gray-400", text: "Checking..." },
+  available: { className: "text-green-700 dark:text-green-400", text: "Available" },
+  taken: { className: "text-red-600 dark:text-red-400", text: "Already taken" },
+  reserved: { className: "text-red-600 dark:text-red-400", text: "This name is reserved" },
+  invalid: { className: "text-red-600 dark:text-red-400", text: "3–30 characters: letters, numbers, _ or ." },
+};
 
 const Message = ({ status }) =>
   status.message ? (
@@ -28,15 +37,51 @@ const Settings = () => {
   const [accountStatus, setAccountStatus] = useState({ type: "", message: "" });
   const [deleteStatus, setDeleteStatus] = useState({ type: "", message: "" });
   const [busy, setBusy] = useState("");
+  // Server answer for the last username we checked: { username, result }
+  const [checked, setChecked] = useState({ username: "", result: "" });
+
+  const cleanUsername = username.trim().toLowerCase();
+  const usernameChanged = cleanUsername !== profile.username;
+  const usernameValid = USERNAME_PATTERN.test(cleanUsername);
+
+  let availability = "";
+  if (usernameChanged) {
+    if (!usernameValid) availability = "invalid";
+    else if (checked.username === cleanUsername) availability = checked.result;
+    else availability = "checking";
+  }
+
+  // Check the new link as the user types, once they pause
+  useEffect(() => {
+    if (!usernameChanged || !usernameValid) return;
+
+    let cancelled = false;
+
+    const timer = setTimeout(async () => {
+      let result = "";
+      try {
+        const { data } = await api.get(`/users/check-username/${cleanUsername}`);
+        result = data.available ? "available" : data.reason || "taken";
+      } catch {
+        // Leave it unknown; saving still reports any problem
+      }
+      if (!cancelled) setChecked({ username: cleanUsername, result });
+    }, 400);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [cleanUsername, usernameChanged, usernameValid]);
 
   // Google accounts have no Tied password to change
   const hasPassword = user.providerData.some((p) => p.providerId === "password");
 
   const handleSaveProfile = async () => {
-    const value = username.trim().toLowerCase();
+    const value = cleanUsername;
     setProfileStatus({ type: "", message: "" });
 
-    if (!/^[a-z0-9_.]{3,30}$/.test(value)) {
+    if (!USERNAME_PATTERN.test(value)) {
       setProfileStatus({ type: "error", message: "Username must be 3–30 characters: letters, numbers, _ or ." });
       return;
     }
@@ -47,7 +92,7 @@ const Settings = () => {
       const { data } = await api.patch("/users/me", { username: value });
       setProfile(data);
       setUsername(data.username);
-      setProfileStatus({ type: "success", message: "Username updated." });
+      setProfileStatus({ type: "success", message: `Your link is now ${profileUrl(data.username)}. Old links to your profile will stop working.` });
     } catch (err) {
       setProfileStatus({ type: "error", message: getApiErrorMessage(err) });
     } finally {
@@ -137,24 +182,37 @@ const Settings = () => {
         <div className="mt-6">
 
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-            Username
+            Profile Link
           </label>
+
+          <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
+            Your username is your public link. Pick something easy to remember.
+          </p>
 
           <div className="flex mt-2">
 
             <span className="bg-gray-100 border border-gray-200 border-r-0 rounded-l-lg px-3 sm:px-4 py-3 text-gray-500 dark:bg-slate-800 dark:border-slate-700 dark:text-gray-400">
-              {window.location.host}/
+              {profileUrlPrefix()}
             </span>
 
             <input
               type="text"
               aria-label="Username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value.replace(/\s/g, ""))}
+              maxLength={30}
+              autoCapitalize="none"
+              spellCheck={false}
               className="flex-1 min-w-0 p-3 border border-gray-200 rounded-r-lg dark:border-slate-700"
             />
 
           </div>
+
+          {AVAILABILITY_MESSAGES[availability] && (
+            <p className={`mt-2 text-sm ${AVAILABILITY_MESSAGES[availability].className}`}>
+              {AVAILABILITY_MESSAGES[availability].text}
+            </p>
+          )}
 
         </div>
 
@@ -183,7 +241,7 @@ const Settings = () => {
         <button
           type="button"
           onClick={handleSaveProfile}
-          disabled={busy === "profile" || username === profile.username}
+          disabled={busy === "profile" || !usernameChanged || ["checking", "invalid", "taken", "reserved"].includes(availability)}
           className="mt-6 bg-slate-900 text-white px-5 py-3 rounded-lg hover:bg-slate-700 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-teal-600 dark:hover:bg-teal-700"
         >
           {busy === "profile" ? "Saving..." : "Save Changes"}

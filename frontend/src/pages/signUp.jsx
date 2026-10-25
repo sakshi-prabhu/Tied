@@ -58,7 +58,11 @@ const SignUp = () => {
       const { data } = await api.get(`/users/check-username/${username}`);
 
       if (!data.available) {
-        setError("That username is already taken.");
+        setError(
+          data.reason === "reserved"
+            ? "That username is reserved. Please choose another one."
+            : "That username is already taken."
+        );
         setSubmitting(false);
         return;
       }

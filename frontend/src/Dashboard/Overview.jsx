@@ -3,6 +3,7 @@ import useAnalytics from "../hooks/useAnalytics.js";
 import StatCard from "./StatCard.jsx";
 import { CTR_INFO } from "./statInfo.js";
 import PerformanceChart, { SeriesLegend } from "./PerformanceChart.jsx";
+import ProfileCard from "./ProfileCard.jsx";
 
 const Overview = () => {
   const { profile } = useAuth();
@@ -17,6 +18,8 @@ const Overview = () => {
       <p className="mt-2 text-gray-600 dark:text-gray-400">
         Welcome back, {profile.displayName || profile.username}! Here's what's happening with your Tied profile.
       </p>
+
+      <ProfileCard />
 
       {error && (
         <p className="mt-6 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3 dark:text-red-300 dark:bg-red-950/40 dark:border-red-900">
