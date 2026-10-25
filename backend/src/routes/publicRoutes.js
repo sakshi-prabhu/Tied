@@ -1,5 +1,6 @@
 const express = require("express");
-const { User, Link, AnalyticsEvent, Avatar } = require("../models");
+const { User, Link, Avatar } = require("../models");
+const { recordEvent } = require("../utils/tracking");
 
 const router = express.Router();
 
@@ -43,41 +44,30 @@ router.get("/:username", async (req, res) => {
 
 // Called by the public page once it loads; body: { referrer: document.referrer }
 router.post("/:username/view", async (req, res) => {
-  const user = await User.findOneAndUpdate(
-    { username: req.params.username.toLowerCase() },
-    { $inc: { profileViews: 1 } }
-  );
+  const user = await User.findOne({ username: req.params.username.toLowerCase() });
 
   if (!user) {
     return res.status(404).json({ message: "Profile not found" });
   }
 
-  await AnalyticsEvent.create({
-    user: user._id,
-    type: "view",
-    referrer: req.body?.referrer || "",
-  });
+  if (await recordEvent(req, { user: user._id, type: "view" })) {
+    await User.updateOne({ _id: user._id }, { $inc: { profileViews: 1 } });
+  }
 
   res.status(204).end();
 });
 
 // Called when a visitor clicks a link; responds with the URL to open
 router.post("/links/:id/click", async (req, res) => {
-  const link = await Link.findOneAndUpdate(
-    { _id: req.params.id, active: true },
-    { $inc: { clicks: 1 } }
-  );
+  const link = await Link.findOne({ _id: req.params.id, active: true });
 
   if (!link) {
     return res.status(404).json({ message: "Link not found" });
   }
 
-  await AnalyticsEvent.create({
-    user: link.user,
-    link: link._id,
-    type: "click",
-    referrer: req.body?.referrer || "",
-  });
+  if (await recordEvent(req, { user: link.user, link: link._id, type: "click" })) {
+    await Link.updateOne({ _id: link._id }, { $inc: { clicks: 1 } });
+  }
 
   res.json({ url: link.url });
 });
