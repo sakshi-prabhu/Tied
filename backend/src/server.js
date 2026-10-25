@@ -7,12 +7,12 @@ const connectDB = require("./config/db");
 const app = express();
 const testRoutes = require("./routes/testRoutes");
 
-app.use("/api/test", testRoutes);
-
 connectDB();
 
 app.use(cors());
 app.use(express.json());
+
+app.use("/api/test", testRoutes);
 
 app.get("/", (req, res) => {
   res.json({
