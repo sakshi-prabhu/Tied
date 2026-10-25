@@ -22,6 +22,14 @@ const COLOR_FIELDS = [
   { key: "textColor", label: "Button Text" },
 ];
 
+// Matches the defaults in the backend User model
+const DEFAULT_THEME = {
+  theme: "light",
+  backgroundColor: "#ffffff",
+  buttonColor: "#0f172a",
+  textColor: "#ffffff",
+};
+
 const optionClass = (selected) =>
   selected ? "border-2 border-slate-800" : "border border-gray-300 hover:bg-gray-100";
 
@@ -51,6 +59,15 @@ const Appearance = () => {
   const setAppearance = (key, value) => {
     setForm({ ...form, appearance: { ...form.appearance, [key]: value } });
   };
+
+  // Like the other options, this only takes effect after "Save Changes"
+  const resetTheme = () => {
+    setForm({ ...form, appearance: { ...form.appearance, ...DEFAULT_THEME } });
+  };
+
+  const isDefaultTheme = Object.entries(DEFAULT_THEME).every(
+    ([key, value]) => form.appearance[key] === value
+  );
 
   // The picture saves right away, separately from "Save Changes"
   const handleImageChange = async (e) => {
@@ -284,6 +301,16 @@ const Appearance = () => {
                 </label>
               ))}
             </div>
+          )}
+
+          {!isDefaultTheme && (
+            <button
+              type="button"
+              onClick={resetTheme}
+              className="mt-4 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-100"
+            >
+              Reset to Default Theme
+            </button>
           )}
 
 
