@@ -9,6 +9,12 @@
 }
 
 @layer base {
+  /* Keep #section anchors from landing under the fixed navbar */
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+  }
+
   body {
     margin: 0;
     min-width: 320px;

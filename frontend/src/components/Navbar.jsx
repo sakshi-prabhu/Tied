@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import tiedImage from "../assets/tied.jpeg";
 import { Link } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
@@ -13,9 +13,27 @@ const navLinks = [
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navRef = useRef(null);
+
+  // Scroll to the section ourselves so it lands below the fixed navbar
+  const scrollToSection = (e, href) => {
+    const target = document.querySelector(href);
+    if (!target) return;
+    e.preventDefault();
+    setMenuOpen(false);
+
+    // Wait a frame so the mobile menu has collapsed before measuring the navbar
+    requestAnimationFrame(() => {
+      const navHeight = navRef.current?.offsetHeight ?? 0;
+      const top = target.getBoundingClientRect().top + window.scrollY - navHeight;
+      window.scrollTo({ top: href === "#home" ? 0 : top, behavior: "smooth" });
+      window.history.replaceState(null, "", href);
+    });
+  };
 
   return (
     <nav
+      ref={navRef}
       className="fixed top-0 left-0 w-full z-50 text-white px-4 py-3 border border-y-gray-600 border-x-0"
       style={{ backgroundColor: "#112034" }}
     >
@@ -23,7 +41,7 @@ const Navbar = () => {
 
         {/* Logo */}
         <div className="text-xl font-bold">
-          <a href="#home">
+          <a href="#home" onClick={(e) => scrollToSection(e, "#home")}>
             <img
               src={tiedImage}
               alt="Tied logo"
@@ -38,6 +56,7 @@ const Navbar = () => {
             <a
               key={link.href}
               href={link.href}
+              onClick={(e) => scrollToSection(e, link.href)}
               className="hover:text-gray-300 text-sm font-medium tracking-wide"
             >
               {link.label}
@@ -77,7 +96,7 @@ const Navbar = () => {
             <a
               key={link.href}
               href={link.href}
-              onClick={() => setMenuOpen(false)}
+              onClick={(e) => scrollToSection(e, link.href)}
               className="py-3 px-2 rounded-lg hover:bg-white/10 font-medium"
             >
               {link.label}
