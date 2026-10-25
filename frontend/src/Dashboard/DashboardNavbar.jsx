@@ -33,38 +33,21 @@ const DashboardNavbar = ({ onMenuClick, sidebarOpen }) => {
         </Link>
       </div>
 
-      <div className="flex items-center gap-6">
-        {/* Navigation Links */}
-        <div className="hidden sm:flex items-center space-x-6">
-          <Link to="/dashboard" className="hover:text-gray-300 text-sm font-medium">
-            Dashboard
-          </Link>
-
-          <Link to="/dashboard/appearance" className="hover:text-gray-300 text-sm font-medium">
-            Profile
-          </Link>
-
-          <Link to="/dashboard/settings" className="hover:text-gray-300 text-sm font-medium">
-            Settings
-          </Link>
-        </div>
-
-        {/* Profile picture, same destination as the Profile link */}
-        <Link
-          to="/dashboard/appearance"
-          aria-label="Edit profile"
-          title="Edit profile"
-          className="shrink-0 rounded-full ring-2 ring-white/20 hover:ring-white/60 transition"
-        >
-          {profile?.avatarUrl ? (
-            <img src={profile.avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover" />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-slate-600 flex items-center justify-center font-semibold">
-              {initial}
-            </div>
-          )}
-        </Link>
-      </div>
+      {/* Profile picture, opens the profile editor */}
+      <Link
+        to="/dashboard/appearance"
+        aria-label="Edit profile"
+        title="Edit profile"
+        className="shrink-0 rounded-full ring-2 ring-white/20 hover:ring-white/60 transition"
+      >
+        {profile?.avatarUrl ? (
+          <img src={profile.avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover" />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-slate-600 flex items-center justify-center font-semibold">
+            {initial}
+          </div>
+        )}
+      </Link>
     </nav>
   );
 };
