@@ -1,3 +1,5 @@
+import LinkIcon from "./LinkIcon.jsx";
+
 const THEMES = {
   light: { backgroundColor: "#ffffff", buttonColor: "#0f172a", textColor: "#ffffff", pageText: "#111827" },
   dark: { backgroundColor: "#111827", buttonColor: "#ffffff", textColor: "#111827", pageText: "#ffffff" },
@@ -72,11 +74,14 @@ const ProfileView = ({ profile, links, onLinkClick }) => {
             target="_blank"
             rel="noopener noreferrer"
             onClick={onLinkClick ? (e) => onLinkClick(e, link) : (e) => e.preventDefault()}
-            className={`block text-center py-3 px-4 font-medium hover:opacity-90 transition ${BUTTON_SHAPES[appearance.buttonStyle]}`}
+            className={`relative flex items-center justify-center py-3 px-12 font-medium hover:opacity-90 transition ${BUTTON_SHAPES[appearance.buttonStyle]}`}
             style={{ backgroundColor: colors.buttonColor, color: colors.textColor }}
           >
-            {link.icon && <span className="mr-2">{link.icon}</span>}
-            {link.title}
+            {/* Pinned left so titles stay centred whatever the icon's width */}
+            <span className="absolute left-4 w-6 h-6 flex items-center justify-center rounded bg-white/90">
+              <LinkIcon url={link.url} icon={link.icon} className="w-5 h-5" />
+            </span>
+            <span className="truncate">{link.title}</span>
           </a>
         ))}
 

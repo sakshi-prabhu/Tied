@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api, { getApiErrorMessage } from "../../services/api.js";
+import LinkIcon from "../../components/LinkIcon.jsx";
 
 const emptyForm = { title: "", url: "", icon: "" };
 
@@ -15,7 +16,7 @@ const LinkForm = ({ initial = emptyForm, submitLabel, onSubmit, onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-    await onSubmit({ ...form, title: form.title.trim(), url: form.url.trim() });
+    await onSubmit({ ...form, title: form.title.trim(), url: form.url.trim(), icon: form.icon.trim() });
     setSaving(false);
   };
 
@@ -24,21 +25,28 @@ const LinkForm = ({ initial = emptyForm, submitLabel, onSubmit, onCancel }) => {
       onSubmit={handleSubmit}
       className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 space-y-4"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-[5rem_1fr] gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-4">
         <div>
           <label htmlFor="icon" className="block text-sm font-medium text-gray-700">
             Icon
           </label>
-          <input
-            id="icon"
-            name="icon"
-            type="text"
-            maxLength={4}
-            value={form.icon}
-            onChange={handleChange}
-            placeholder="🔗"
-            className="w-full mt-2 p-3 border border-gray-200 rounded-lg text-center"
-          />
+          <div className="flex items-center gap-2 mt-2">
+            {/* Live preview: the site's icon until an emoji is typed */}
+            <div className="w-12 h-12 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-2xl">
+              <LinkIcon url={form.url} icon={form.icon.trim()} />
+            </div>
+            <input
+              id="icon"
+              name="icon"
+              type="text"
+              maxLength={4}
+              value={form.icon}
+              onChange={handleChange}
+              placeholder="Auto"
+              title="Leave empty to use the website's icon, or type an emoji"
+              className="w-full min-w-0 p-3 border border-gray-200 rounded-lg text-center"
+            />
+          </div>
         </div>
 
         <div>
@@ -269,7 +277,7 @@ const MyLink = () => {
 
                 {/* Icon */}
                 <div className="w-12 h-12 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-2xl">
-                  {link.icon || "🔗"}
+                  <LinkIcon url={link.url} icon={link.icon} />
                 </div>
 
                 {/* Link Information */}
