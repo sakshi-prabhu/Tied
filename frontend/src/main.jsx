@@ -8,6 +8,7 @@ import LandingPage from "./pages/LandingPage.jsx";
 
 import SignIn from "./pages/signIn.jsx";
 import SignUp from "./pages/signUp.jsx";
+import PublicProfile from "./pages/PublicProfile.jsx";
 
 import DashboardLayout from "./Layouts/DashboardLayout.jsx";
 import Overview from "./Dashboard/Overview.jsx";
@@ -49,6 +50,10 @@ export const App = () => {
 
         <Route path="settings" element={<Settings />} />
       </Route>
+
+
+      {/* Public profile: must stay last so fixed paths like /signin win */}
+      <Route path="/:username" element={<PublicProfile />} />
 
     </Routes>
   );

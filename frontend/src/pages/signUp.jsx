@@ -7,6 +7,8 @@ import {
 } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/firebaseConfig.js";
 import { getAuthErrorMessage, isPopupClosed } from "../firebase/authErrors.js";
+import { setPendingProfile } from "../context/AuthContext.jsx";
+import api, { getApiErrorMessage } from "../services/api.js";
 import tiedImage from "../assets/tied.jpeg";
 
 const inputClass =
@@ -50,7 +52,26 @@ const SignUp = () => {
 
     setSubmitting(true);
 
+    const username = form.username.toLowerCase();
+
     try {
+      const { data } = await api.get(`/users/check-username/${username}`);
+
+      if (!data.available) {
+        setError("That username is already taken.");
+        setSubmitting(false);
+        return;
+      }
+    } catch (err) {
+      setError(getApiErrorMessage(err));
+      setSubmitting(false);
+      return;
+    }
+
+    try {
+      // Picked up by AuthContext when it creates the Tied profile
+      setPendingProfile({ username, displayName: form.name.trim() });
+
       const { user } = await createUserWithEmailAndPassword(
         auth,
         form.email.trim(),
@@ -59,6 +80,7 @@ const SignUp = () => {
       await updateProfile(user, { displayName: form.name.trim() });
       navigate("/dashboard");
     } catch (err) {
+      setPendingProfile(null);
       setError(getAuthErrorMessage(err));
     } finally {
       setSubmitting(false);

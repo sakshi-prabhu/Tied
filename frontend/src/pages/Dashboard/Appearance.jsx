@@ -1,4 +1,69 @@
+import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext.jsx";
+import api, { getApiErrorMessage } from "../../services/api.js";
+import ProfileView from "../../components/ProfileView.jsx";
+
+const THEME_OPTIONS = [
+  { value: "light", label: "Light", className: "bg-white" },
+  { value: "dark", label: "Dark", className: "bg-gray-900 text-white" },
+  { value: "custom", label: "Custom", className: "bg-white" },
+];
+
+const BUTTON_OPTIONS = [
+  { value: "rounded", label: "Rounded", className: "rounded-full" },
+  { value: "soft", label: "Soft", className: "rounded-lg" },
+  { value: "square", label: "Square", className: "" },
+];
+
+const COLOR_FIELDS = [
+  { key: "backgroundColor", label: "Background" },
+  { key: "buttonColor", label: "Button" },
+  { key: "textColor", label: "Button Text" },
+];
+
+const optionClass = (selected) =>
+  selected ? "border-2 border-slate-800" : "border border-gray-300 hover:bg-gray-100";
+
 const Appearance = () => {
+  const { profile, setProfile } = useAuth();
+
+  const [form, setForm] = useState({
+    displayName: profile.displayName || "",
+    bio: profile.bio || "",
+    avatarUrl: profile.avatarUrl || "",
+    appearance: { ...profile.appearance },
+  });
+  const [links, setLinks] = useState([]);
+  const [status, setStatus] = useState({ type: "", message: "" });
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    api.get("/links").then((res) => setLinks(res.data.filter((link) => link.active)));
+  }, []);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const setAppearance = (key, value) => {
+    setForm({ ...form, appearance: { ...form.appearance, [key]: value } });
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setStatus({ type: "", message: "" });
+
+    try {
+      const { data } = await api.patch("/users/me", form);
+      setProfile(data);
+      setStatus({ type: "success", message: "Changes saved." });
+    } catch (err) {
+      setStatus({ type: "error", message: getApiErrorMessage(err) });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div>
 
@@ -33,19 +98,29 @@ const Appearance = () => {
           {/* Profile Image */}
           <div className="mt-8">
 
-            <label className="block text-sm font-medium text-gray-700">
-              Profile Image
+            <label htmlFor="avatarUrl" className="block text-sm font-medium text-gray-700">
+              Profile Image URL
             </label>
 
             <div className="flex items-center gap-5 mt-3">
 
-              <div className="w-20 h-20 rounded-full bg-slate-200 flex items-center justify-center text-2xl">
-                👤
-              </div>
+              {form.avatarUrl ? (
+                <img src={form.avatarUrl} alt="" className="w-20 h-20 shrink-0 rounded-full object-cover" />
+              ) : (
+                <div className="w-20 h-20 shrink-0 rounded-full bg-slate-200 flex items-center justify-center text-2xl">
+                  👤
+                </div>
+              )}
 
-              <button className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100">
-                Upload Image
-              </button>
+              <input
+                id="avatarUrl"
+                name="avatarUrl"
+                type="url"
+                value={form.avatarUrl}
+                onChange={handleChange}
+                placeholder="https://example.com/photo.jpg"
+                className="w-full min-w-0 p-3 border border-gray-200 rounded-lg"
+              />
 
             </div>
 
@@ -55,15 +130,18 @@ const Appearance = () => {
           {/* Name */}
           <div className="mt-6">
 
-            <label className="block text-sm font-medium text-gray-700">
+            <label htmlFor="displayName" className="block text-sm font-medium text-gray-700">
               Name
             </label>
 
             <input
+              id="displayName"
+              name="displayName"
               type="text"
-              value="Sakshi"
-              readOnly
-              className="w-full mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50"
+              maxLength={50}
+              value={form.displayName}
+              onChange={handleChange}
+              className="w-full mt-2 p-3 border border-gray-200 rounded-lg"
             />
 
           </div>
@@ -72,16 +150,24 @@ const Appearance = () => {
           {/* Bio */}
           <div className="mt-6">
 
-            <label className="block text-sm font-medium text-gray-700">
+            <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
               Bio
             </label>
 
             <textarea
+              id="bio"
+              name="bio"
               rows="3"
-              value="Build. Create. Share."
-              readOnly
-              className="w-full mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50 resize-none"
+              maxLength={160}
+              value={form.bio}
+              onChange={handleChange}
+              placeholder="Tell visitors about yourself"
+              className="w-full mt-2 p-3 border border-gray-200 rounded-lg resize-none"
             />
+
+            <p className="text-xs text-gray-400 text-right">
+              {form.bio.length}/160
+            </p>
 
           </div>
 
@@ -94,22 +180,38 @@ const Appearance = () => {
             </label>
 
             <div className="flex flex-wrap gap-3 mt-3">
-
-              <button className="px-4 py-2 rounded-lg border-2 border-slate-800 bg-white">
-                Light
-              </button>
-
-              <button className="px-4 py-2 rounded-lg border border-gray-300 bg-gray-900 text-white">
-                Dark
-              </button>
-
-              <button className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100">
-                Custom
-              </button>
-
+              {THEME_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setAppearance("theme", option.value)}
+                  className={`px-4 py-2 rounded-lg ${option.className} ${optionClass(form.appearance.theme === option.value)}`}
+                >
+                  {option.label}
+                </button>
+              ))}
             </div>
 
           </div>
+
+
+          {/* Custom Colors */}
+          {form.appearance.theme === "custom" && (
+            <div className="mt-6 grid grid-cols-3 gap-3">
+              {COLOR_FIELDS.map((field) => (
+                <label key={field.key} className="text-sm text-gray-700">
+                  {field.label}
+
+                  <input
+                    type="color"
+                    value={form.appearance[field.key]}
+                    onChange={(e) => setAppearance(field.key, e.target.value)}
+                    className="block w-full h-10 mt-2 border border-gray-200 rounded-lg cursor-pointer"
+                  />
+                </label>
+              ))}
+            </div>
+          )}
 
 
           {/* Button Style */}
@@ -120,27 +222,42 @@ const Appearance = () => {
             </label>
 
             <div className="flex flex-wrap gap-3 mt-3">
-
-              <button className="px-5 py-2 rounded-full border-2 border-slate-800">
-                Rounded
-              </button>
-
-              <button className="px-5 py-2 rounded-lg border border-gray-300">
-                Soft
-              </button>
-
-              <button className="px-5 py-2 border border-gray-300">
-                Square
-              </button>
-
+              {BUTTON_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  onClick={() => setAppearance("buttonStyle", option.value)}
+                  className={`px-5 py-2 ${option.className} ${optionClass(form.appearance.buttonStyle === option.value)}`}
+                >
+                  {option.label}
+                </button>
+              ))}
             </div>
 
           </div>
 
 
+          {status.message && (
+            <p
+              className={`mt-6 text-sm rounded-lg px-4 py-3 border ${
+                status.type === "error"
+                  ? "text-red-700 bg-red-50 border-red-200"
+                  : "text-green-700 bg-green-50 border-green-200"
+              }`}
+            >
+              {status.message}
+            </p>
+          )}
+
+
           {/* Save Button */}
-          <button className="mt-8 w-full bg-slate-900 text-white py-3 rounded-lg hover:bg-slate-700">
-            Save Changes
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={saving}
+            className="mt-8 w-full bg-slate-900 text-white py-3 rounded-lg hover:bg-slate-700 disabled:opacity-60"
+          >
+            {saving ? "Saving..." : "Save Changes"}
           </button>
 
         </div>
@@ -161,9 +278,14 @@ const Appearance = () => {
               </p>
             </div>
 
-            <span className="text-sm text-green-600">
-              ● Live
-            </span>
+            <a
+              href={`/${profile.username}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-teal-700 hover:underline"
+            >
+              View live profile ↗
+            </a>
 
           </div>
 
@@ -173,53 +295,11 @@ const Appearance = () => {
 
             <div className="w-full max-w-75 min-h-130 bg-slate-900 rounded-[2rem] p-3 shadow-xl">
 
-              <div className="bg-white rounded-[1.5rem] min-h-[494px] p-6">
-
-                {/* Profile */}
-                <div className="text-center">
-
-                  <div className="w-20 h-20 mx-auto rounded-full bg-slate-200 flex items-center justify-center text-3xl">
-                    👤
-                  </div>
-
-                  <h3 className="text-xl font-bold mt-4">
-                    Sakshi
-                  </h3>
-
-                  <p className="text-sm text-gray-500 mt-2">
-                    Build. Create. Share.
-                  </p>
-
-                </div>
-
-
-                {/* Links */}
-                <div className="mt-8 space-y-3">
-
-                  <div className="bg-slate-900 text-white text-center py-3 rounded-full">
-                    GitHub
-                  </div>
-
-                  <div className="bg-slate-900 text-white text-center py-3 rounded-full">
-                    LinkedIn
-                  </div>
-
-                  <div className="bg-slate-900 text-white text-center py-3 rounded-full">
-                    Portfolio
-                  </div>
-
-                  <div className="bg-slate-900 text-white text-center py-3 rounded-full">
-                    Resume
-                  </div>
-
-                </div>
-
-
-                {/* Tied Branding */}
-                <div className="text-center mt-8 text-xs text-gray-400">
-                  Powered by Tied
-                </div>
-
+              <div className="rounded-[1.5rem] h-[494px] overflow-y-auto flex flex-col">
+                <ProfileView
+                  profile={{ ...profile, ...form }}
+                  links={links}
+                />
               </div>
 
             </div>

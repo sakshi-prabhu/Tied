@@ -1,4 +1,12 @@
+import { useAuth } from "../context/AuthContext.jsx";
+import useAnalytics from "../hooks/useAnalytics.js";
+import StatCard from "./StatCard.jsx";
+import PerformanceChart, { SeriesLegend } from "./PerformanceChart.jsx";
+
 const Overview = () => {
+  const { profile } = useAuth();
+  const { data, error } = useAnalytics(7);
+
   return (
     <div>
       <h1 className="text-3xl font-extrabold text-gray-900">
@@ -6,88 +14,90 @@ const Overview = () => {
       </h1>
 
       <p className="mt-2 text-gray-600">
-        Welcome back! Here's what's happening with your Tied profile.
+        Welcome back, {profile.displayName || profile.username}! Here's what's happening with your Tied profile.
       </p>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+      {error && (
+        <p className="mt-6 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+          {error}
+        </p>
+      )}
 
-        <div className="bg-white p-6 rounded-xl shadow-sm">
-          <p className="text-gray-500">Profile Views</p>
-          <h2 className="text-3xl font-bold mt-2">
-            12,482
-          </h2>
-          <p className="text-green-600 mt-2">
-            +18.2% ↑
-          </p>
-        </div>
+      {!data && !error && (
+        <p className="mt-8 text-gray-500">Loading stats...</p>
+      )}
 
-        <div className="bg-white p-6 rounded-xl shadow-sm">
-          <p className="text-gray-500">Link Clicks</p>
-          <h2 className="text-3xl font-bold mt-2">
-            3,421
-          </h2>
-          <p className="text-green-600 mt-2">
-            +12.5% ↑
-          </p>
-        </div>
-
-        <div className="bg-white p-6 rounded-xl shadow-sm">
-          <p className="text-gray-500">Click Through Rate</p>
-          <h2 className="text-3xl font-bold mt-2">
-            27.4%
-          </h2>
-          <p className="text-green-600 mt-2">
-            +4.2% ↑
-          </p>
-        </div>
-
-      </div>
-
-      {/* Bottom section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-
-        <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm">
-          <h2 className="text-xl font-semibold">
-            Profile Performance
-          </h2>
-
-          <div className="h-64 flex items-center justify-center text-gray-400">
-            Graph will go here
+      {data && (
+        <>
+          {/* Stats */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            <StatCard
+              label="Profile Views"
+              value={data.period.views}
+              current={data.period.views}
+              previous={data.previousPeriod.views}
+            />
+            <StatCard
+              label="Link Clicks"
+              value={data.period.clicks}
+              current={data.period.clicks}
+              previous={data.previousPeriod.clicks}
+            />
+            <StatCard
+              label="Click Through Rate"
+              value={data.period.ctr}
+              suffix="%"
+              current={data.period.ctr}
+              previous={data.previousPeriod.ctr}
+            />
           </div>
-        </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-sm">
-          <h2 className="text-xl font-semibold">
-            Top Links
-          </h2>
+          {/* Bottom section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
 
-          <div className="mt-6 space-y-5">
+            <div className="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-gray-200 min-w-0">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-semibold">
+                    Profile Performance
+                  </h2>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Last 7 days
+                  </p>
+                </div>
 
-            <div className="flex justify-between">
-              <span>GitHub</span>
-              <span className="font-semibold">842</span>
+                <SeriesLegend />
+              </div>
+
+              <PerformanceChart series={data.series} />
             </div>
 
-            <div className="flex justify-between">
-              <span>LinkedIn</span>
-              <span className="font-semibold">621</span>
-            </div>
+            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+              <h2 className="text-xl font-semibold">
+                Top Links
+              </h2>
 
-            <div className="flex justify-between">
-              <span>Portfolio</span>
-              <span className="font-semibold">493</span>
-            </div>
+              <p className="text-sm text-gray-500 mt-1">
+                All-time clicks
+              </p>
 
-            <div className="flex justify-between">
-              <span>Resume</span>
-              <span className="font-semibold">317</span>
+              <div className="mt-6 space-y-5">
+                {data.topLinks.length === 0 && (
+                  <p className="text-gray-400 text-sm">No links yet</p>
+                )}
+
+                {data.topLinks.map((link) => (
+                  <div key={link._id} className="flex justify-between gap-4">
+                    <span className="truncate">{link.title}</span>
+                    <span className="font-semibold">{link.clicks.toLocaleString()}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
           </div>
-        </div>
-
-      </div>
+        </>
+      )}
     </div>
   );
 };
