@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useAnalytics from "../../hooks/useAnalytics.js";
 import StatCard from "../../Dashboard/StatCard.jsx";
+import { CTR_INFO } from "../../Dashboard/statInfo.js";
 import PerformanceChart, { SeriesLegend } from "../../Dashboard/PerformanceChart.jsx";
 
 const RANGES = [
@@ -75,6 +76,7 @@ const Analytics = () => {
             />
             <StatCard
               label="Click Through Rate"
+              info={CTR_INFO}
               value={data.period.ctr}
               suffix="%"
               current={data.period.ctr}

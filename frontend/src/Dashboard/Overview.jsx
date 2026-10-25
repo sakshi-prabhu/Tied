@@ -1,6 +1,7 @@
 import { useAuth } from "../context/AuthContext.jsx";
 import useAnalytics from "../hooks/useAnalytics.js";
 import StatCard from "./StatCard.jsx";
+import { CTR_INFO } from "./statInfo.js";
 import PerformanceChart, { SeriesLegend } from "./PerformanceChart.jsx";
 
 const Overview = () => {
@@ -45,6 +46,7 @@ const Overview = () => {
             />
             <StatCard
               label="Click Through Rate"
+              info={CTR_INFO}
               value={data.period.ctr}
               suffix="%"
               current={data.period.ctr}
