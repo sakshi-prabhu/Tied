@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../firebase/firebaseConfig.js";
 import { getAuthErrorMessage, isPopupClosed } from "../firebase/authErrors.js";
+import { HiX } from "react-icons/hi";
 import tiedImage from "../assets/tied.jpeg";
 
 const SignIn = () => {
@@ -46,8 +47,18 @@ const SignIn = () => {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-8 dark:bg-slate-950">
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md border-t-4 border-teal-600 dark:bg-slate-900"
+        className="relative bg-white p-6 sm:p-8 rounded-2xl shadow-2xl w-full max-w-md border-t-4 border-teal-600 dark:bg-slate-900"
       >
+
+        {/* Close: back to landing page */}
+        <Link
+          to="/"
+          aria-label="Close sign in"
+          title="Back to home"
+          className="absolute top-4 right-4 p-2 rounded-full text-2xl text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition dark:text-gray-400 dark:hover:text-gray-100 dark:hover:bg-slate-800"
+        >
+          <HiX />
+        </Link>
 
         <div className="text-center mb-8">
           <Link to="/">
