@@ -18,7 +18,7 @@ const generateUsername = async (email) => {
   base = base.slice(0, 24).padEnd(3, "0");
 
   let candidate = base;
-  while (isReservedUsername(candidate) || (await User.exists({ username: candidate }))) {
+  while (isReservedUsername(candidate) || (await User.isUsernameTaken(candidate))) {
     candidate = `${base}${Math.floor(1000 + Math.random() * 9000)}`;
   }
   return candidate;
@@ -36,7 +36,7 @@ router.get("/check-username/:username", async (req, res) => {
     return res.json({ available: false, reason: "reserved" });
   }
 
-  const taken = await User.exists({ username });
+  const taken = await User.isUsernameTaken(username);
   res.json({ available: !taken, reason: taken ? "taken" : undefined });
 });
 
@@ -52,6 +52,10 @@ router.post("/me", verifyToken, async (req, res) => {
   const username = req.body.username
     ? req.body.username.toLowerCase()
     : await generateUsername(email);
+
+  if (req.body.username && (await User.isUsernameTaken(username))) {
+    return res.status(409).json({ message: "That username is already taken" });
+  }
 
   try {
     const user = await User.create({
@@ -77,6 +81,21 @@ router.get("/me", verifyToken, requireProfile, (req, res) => {
 });
 
 router.patch("/me", verifyToken, requireProfile, async (req, res) => {
+  const newUsername = req.body.username?.toLowerCase().trim();
+  const oldUsername = req.user.username;
+
+  if (newUsername && newUsername !== oldUsername) {
+    if (await User.isUsernameTaken(newUsername, req.user._id)) {
+      return res.status(409).json({ message: "That username is already taken" });
+    }
+
+    // Keep the old name so links already shared still reach this profile
+    req.user.previousUsernames = [
+      ...req.user.previousUsernames.filter((name) => name !== newUsername),
+      oldUsername,
+    ];
+  }
+
   for (const field of EDITABLE_FIELDS) {
     if (req.body[field] !== undefined) {
       req.user[field] = req.body[field];

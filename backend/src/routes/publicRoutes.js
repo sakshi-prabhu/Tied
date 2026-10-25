@@ -20,9 +20,10 @@ router.get("/avatars/:userId", async (req, res) => {
   res.send(avatar.data);
 });
 
-// Public profile page data: tied.app/<username>
+// Public profile page data: tied.app/<username>. Old usernames also resolve;
+// the response's username is the current one, so the page can redirect.
 router.get("/:username", async (req, res) => {
-  const user = await User.findOne({ username: req.params.username.toLowerCase() });
+  const user = await User.findByAnyUsername(req.params.username);
 
   if (!user) {
     return res.status(404).json({ message: "Profile not found" });
@@ -44,7 +45,7 @@ router.get("/:username", async (req, res) => {
 
 // Called by the public page once it loads; body: { referrer: document.referrer }
 router.post("/:username/view", async (req, res) => {
-  const user = await User.findOne({ username: req.params.username.toLowerCase() });
+  const user = await User.findByAnyUsername(req.params.username);
 
   if (!user) {
     return res.status(404).json({ message: "Profile not found" });

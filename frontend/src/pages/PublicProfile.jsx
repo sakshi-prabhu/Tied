@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../services/api.js";
 import ProfileView from "../components/ProfileView.jsx";
 
 // The page visitors see at /<username>
 const PublicProfile = () => {
   const { username } = useParams();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const viewRecorded = useRef(false);
@@ -14,6 +15,12 @@ const PublicProfile = () => {
     api
       .get(`/public/${username}`)
       .then((res) => {
+        // An old username: move to the current link (this effect then runs again)
+        if (res.data.username !== username.toLowerCase()) {
+          navigate(`/${res.data.username}`, { replace: true });
+          return;
+        }
+
         setProfile(res.data);
 
         // Count each page load once (StrictMode runs effects twice in dev)
@@ -23,7 +30,7 @@ const PublicProfile = () => {
         }
       })
       .catch(() => setNotFound(true));
-  }, [username]);
+  }, [username, navigate]);
 
   // Record the click; the browser opens the link as usual
   const handleLinkClick = (e, link) => {

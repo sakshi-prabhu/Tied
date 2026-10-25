@@ -30,6 +30,13 @@ const userSchema = new mongoose.Schema(
         message: "That username is reserved. Please choose another one.",
       },
     },
+    // Usernames this user had before. Old profile links keep redirecting to
+    // the current username, so no one else can take these.
+    previousUsernames: {
+      type: [String],
+      default: [],
+      index: true,
+    },
     displayName: {
       type: String,
       trim: true,
@@ -68,5 +75,18 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// Is this username in use (now or as an old link) by anyone other than exceptUserId?
+userSchema.statics.isUsernameTaken = function (username, exceptUserId) {
+  const filter = { $or: [{ username }, { previousUsernames: username }] };
+  if (exceptUserId) filter._id = { $ne: exceptUserId };
+  return this.exists(filter);
+};
+
+// Finds a profile by its current username or any username it used before
+userSchema.statics.findByAnyUsername = async function (username) {
+  const name = username.toLowerCase();
+  return (await this.findOne({ username: name })) || this.findOne({ previousUsernames: name });
+};
 
 module.exports = mongoose.model("User", userSchema);

@@ -43,17 +43,20 @@ const Settings = () => {
   const cleanUsername = username.trim().toLowerCase();
   const usernameChanged = cleanUsername !== profile.username;
   const usernameValid = USERNAME_PATTERN.test(cleanUsername);
+  // Switching back to one of your own old usernames is always allowed
+  const ownOldUsername = profile.previousUsernames?.includes(cleanUsername);
 
   let availability = "";
   if (usernameChanged) {
     if (!usernameValid) availability = "invalid";
+    else if (ownOldUsername) availability = "available";
     else if (checked.username === cleanUsername) availability = checked.result;
     else availability = "checking";
   }
 
   // Check the new link as the user types, once they pause
   useEffect(() => {
-    if (!usernameChanged || !usernameValid) return;
+    if (!usernameChanged || !usernameValid || ownOldUsername) return;
 
     let cancelled = false;
 
@@ -72,7 +75,7 @@ const Settings = () => {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [cleanUsername, usernameChanged, usernameValid]);
+  }, [cleanUsername, usernameChanged, usernameValid, ownOldUsername]);
 
   // Google accounts have no Tied password to change
   const hasPassword = user.providerData.some((p) => p.providerId === "password");
@@ -92,7 +95,7 @@ const Settings = () => {
       const { data } = await api.patch("/users/me", { username: value });
       setProfile(data);
       setUsername(data.username);
-      setProfileStatus({ type: "success", message: `Your link is now ${profileUrl(data.username)}. Old links to your profile will stop working.` });
+      setProfileStatus({ type: "success", message: `Your link is now ${profileUrl(data.username)}. Links you already shared will still lead here.` });
     } catch (err) {
       setProfileStatus({ type: "error", message: getApiErrorMessage(err) });
     } finally {
