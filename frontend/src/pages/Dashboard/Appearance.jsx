@@ -5,9 +5,9 @@ import ProfileView from "../../components/ProfileView.jsx";
 import resizeImage from "../../utils/resizeImage.js";
 
 const THEME_OPTIONS = [
-  { value: "light", label: "Light", className: "bg-white" },
+  { value: "light", label: "Light", className: "bg-white text-gray-900" },
   { value: "dark", label: "Dark", className: "bg-gray-900 text-white" },
-  { value: "custom", label: "Custom", className: "bg-white" },
+  { value: "custom", label: "Custom", className: "bg-white text-gray-900" },
 ];
 
 const BUTTON_OPTIONS = [
@@ -31,7 +31,9 @@ const DEFAULT_THEME = {
 };
 
 const optionClass = (selected) =>
-  selected ? "border-2 border-slate-800" : "border border-gray-300 hover:bg-gray-100";
+  selected
+    ? "border-2 border-slate-800 dark:border-teal-400"
+    : "border border-gray-300 hover:bg-gray-100 dark:border-slate-600 dark:hover:bg-slate-800";
 
 const Appearance = () => {
   const { profile, setProfile } = useAuth();
@@ -134,11 +136,11 @@ const Appearance = () => {
 
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold text-gray-900">
+        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
           Appearance
         </h1>
 
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
           Customize how your Tied profile looks to visitors.
         </p>
       </div>
@@ -149,13 +151,13 @@ const Appearance = () => {
 
 
         {/* Customization Panel */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 dark:bg-slate-900 dark:border-slate-700">
 
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
             Customize Profile
           </h2>
 
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
             Personalize your profile appearance.
           </p>
 
@@ -163,7 +165,7 @@ const Appearance = () => {
           {/* Profile Image */}
           <div className="mt-8">
 
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Profile Image
             </label>
 
@@ -172,7 +174,7 @@ const Appearance = () => {
               {profile.avatarUrl ? (
                 <img src={profile.avatarUrl} alt="" className={`w-20 h-20 shrink-0 rounded-full object-cover ${imageBusy ? "opacity-50" : ""}`} />
               ) : (
-                <div className="w-20 h-20 shrink-0 rounded-full bg-slate-200 flex items-center justify-center text-2xl">
+                <div className="w-20 h-20 shrink-0 rounded-full bg-slate-200 flex items-center justify-center text-2xl dark:bg-slate-700">
                   👤
                 </div>
               )}
@@ -190,7 +192,7 @@ const Appearance = () => {
                   type="button"
                   onClick={() => fileInputRef.current.click()}
                   disabled={imageBusy}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-60"
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-60 dark:border-slate-600 dark:hover:bg-slate-800"
                 >
                   {imageBusy ? "Uploading..." : profile.avatarUrl ? "Change Image" : "Upload Image"}
                 </button>
@@ -199,7 +201,7 @@ const Appearance = () => {
                   <button
                     type="button"
                     onClick={handleImageRemove}
-                    className="px-4 py-2 text-red-600 rounded-lg hover:bg-red-50"
+                    className="px-4 py-2 text-red-600 rounded-lg hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
                   >
                     Remove
                   </button>
@@ -220,7 +222,7 @@ const Appearance = () => {
           {/* Name */}
           <div className="mt-6">
 
-            <label htmlFor="displayName" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Name
             </label>
 
@@ -231,7 +233,7 @@ const Appearance = () => {
               maxLength={50}
               value={form.displayName}
               onChange={handleChange}
-              className="w-full mt-2 p-3 border border-gray-200 rounded-lg"
+              className="w-full mt-2 p-3 border border-gray-200 rounded-lg dark:border-slate-700"
             />
 
           </div>
@@ -240,7 +242,7 @@ const Appearance = () => {
           {/* Bio */}
           <div className="mt-6">
 
-            <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Bio
             </label>
 
@@ -252,10 +254,10 @@ const Appearance = () => {
               value={form.bio}
               onChange={handleChange}
               placeholder="Tell visitors about yourself"
-              className="w-full mt-2 p-3 border border-gray-200 rounded-lg resize-none"
+              className="w-full mt-2 p-3 border border-gray-200 rounded-lg resize-none dark:border-slate-700"
             />
 
-            <p className="text-xs text-gray-400 text-right">
+            <p className="text-xs text-gray-400 text-right dark:text-gray-500">
               {form.bio.length}/160
             </p>
 
@@ -265,7 +267,7 @@ const Appearance = () => {
           {/* Theme */}
           <div className="mt-6">
 
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Theme
             </label>
 
@@ -289,14 +291,14 @@ const Appearance = () => {
           {form.appearance.theme === "custom" && (
             <div className="mt-6 grid grid-cols-3 gap-3">
               {COLOR_FIELDS.map((field) => (
-                <label key={field.key} className="text-sm text-gray-700">
+                <label key={field.key} className="text-sm text-gray-700 dark:text-gray-300">
                   {field.label}
 
                   <input
                     type="color"
                     value={form.appearance[field.key]}
                     onChange={(e) => setAppearance(field.key, e.target.value)}
-                    className="block w-full h-10 mt-2 border border-gray-200 rounded-lg cursor-pointer"
+                    className="block w-full h-10 mt-2 border border-gray-200 rounded-lg cursor-pointer dark:border-slate-700"
                   />
                 </label>
               ))}
@@ -307,7 +309,7 @@ const Appearance = () => {
             <button
               type="button"
               onClick={resetTheme}
-              className="mt-4 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-100"
+              className="mt-4 px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-100 dark:border-slate-600 dark:hover:bg-slate-800"
             >
               Reset to Default Theme
             </button>
@@ -317,7 +319,7 @@ const Appearance = () => {
           {/* Button Style */}
           <div className="mt-6">
 
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               Button Style
             </label>
 
@@ -355,7 +357,7 @@ const Appearance = () => {
             type="button"
             onClick={handleSave}
             disabled={saving}
-            className="mt-8 w-full bg-slate-900 text-white py-3 rounded-lg hover:bg-slate-700 disabled:opacity-60"
+            className="mt-8 w-full bg-slate-900 text-white py-3 rounded-lg hover:bg-slate-700 disabled:opacity-60 dark:bg-teal-600 dark:hover:bg-teal-700"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
@@ -364,16 +366,16 @@ const Appearance = () => {
 
 
         {/* Preview */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 dark:bg-slate-900 dark:border-slate-700">
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 Profile Preview
               </h2>
 
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
                 Preview how your profile will appear.
               </p>
             </div>
@@ -382,7 +384,7 @@ const Appearance = () => {
               href={`/${profile.username}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-teal-700 hover:underline"
+              className="text-sm text-teal-700 hover:underline dark:text-teal-400"
             >
               View live profile ↗
             </a>
@@ -393,7 +395,7 @@ const Appearance = () => {
           {/* Phone Preview */}
           <div className="flex justify-center mt-8">
 
-            <div className="w-full max-w-75 min-h-130 bg-slate-900 rounded-[2rem] p-3 shadow-xl">
+            <div className="w-full max-w-75 min-h-130 bg-slate-900 rounded-[2rem] p-3 shadow-xl dark:bg-black dark:ring-1 dark:ring-slate-700">
 
               <div className="rounded-[1.5rem] h-[494px] overflow-y-auto flex flex-col">
                 <ProfileView

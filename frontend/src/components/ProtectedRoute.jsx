@@ -11,13 +11,13 @@ export const ProtectedRoute = ({ children }) => {
 
   if (profileError) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-gray-500 px-4 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-gray-500 px-4 text-center dark:text-gray-400">
         <p>We couldn't load your profile. Please check your connection.</p>
 
         <button
           type="button"
           onClick={refreshProfile}
-          className="bg-slate-900 text-white px-5 py-2 rounded-lg hover:bg-slate-700"
+          className="bg-slate-900 text-white px-5 py-2 rounded-lg hover:bg-slate-700 dark:bg-teal-600 dark:hover:bg-teal-700"
         >
           Try Again
         </button>
@@ -27,7 +27,7 @@ export const ProtectedRoute = ({ children }) => {
 
   if (loading || !profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-500">
+      <div className="min-h-screen flex items-center justify-center text-gray-500 dark:text-gray-400">
         Loading...
       </div>
     );

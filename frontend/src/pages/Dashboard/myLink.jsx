@@ -23,16 +23,16 @@ const LinkForm = ({ initial = emptyForm, submitLabel, onSubmit, onCancel }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 space-y-4"
+      className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 space-y-4 dark:bg-slate-900 dark:border-slate-700"
     >
       <div className="grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-4">
         <div>
-          <label htmlFor="icon" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="icon" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Icon
           </label>
           <div className="flex items-center gap-2 mt-2">
             {/* Live preview: the site's icon until an emoji is typed */}
-            <div className="w-12 h-12 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-2xl">
+            <div className="w-12 h-12 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-2xl dark:bg-slate-950">
               <LinkIcon url={form.url} icon={form.icon.trim()} />
             </div>
             <input
@@ -44,13 +44,13 @@ const LinkForm = ({ initial = emptyForm, submitLabel, onSubmit, onCancel }) => {
               onChange={handleChange}
               placeholder="Auto"
               title="Leave empty to use the website's icon, or type an emoji"
-              className="w-full min-w-0 p-3 border border-gray-200 rounded-lg text-center"
+              className="w-full min-w-0 p-3 border border-gray-200 rounded-lg text-center dark:border-slate-700"
             />
           </div>
         </div>
 
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Title
           </label>
           <input
@@ -62,13 +62,13 @@ const LinkForm = ({ initial = emptyForm, submitLabel, onSubmit, onCancel }) => {
             value={form.title}
             onChange={handleChange}
             placeholder="e.g. GitHub"
-            className="w-full mt-2 p-3 border border-gray-200 rounded-lg"
+            className="w-full mt-2 p-3 border border-gray-200 rounded-lg dark:border-slate-700"
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor="url" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="url" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           URL
         </label>
         <input
@@ -79,7 +79,7 @@ const LinkForm = ({ initial = emptyForm, submitLabel, onSubmit, onCancel }) => {
           value={form.url}
           onChange={handleChange}
           placeholder="github.com/username"
-          className="w-full mt-2 p-3 border border-gray-200 rounded-lg"
+          className="w-full mt-2 p-3 border border-gray-200 rounded-lg dark:border-slate-700"
         />
       </div>
 
@@ -87,7 +87,7 @@ const LinkForm = ({ initial = emptyForm, submitLabel, onSubmit, onCancel }) => {
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 dark:border-slate-600 dark:hover:bg-slate-800"
         >
           Cancel
         </button>
@@ -95,7 +95,7 @@ const LinkForm = ({ initial = emptyForm, submitLabel, onSubmit, onCancel }) => {
         <button
           type="submit"
           disabled={saving}
-          className="bg-slate-900 text-white px-5 py-2 rounded-lg hover:bg-slate-700 disabled:opacity-60"
+          className="bg-slate-900 text-white px-5 py-2 rounded-lg hover:bg-slate-700 disabled:opacity-60 dark:bg-teal-600 dark:hover:bg-teal-700"
         >
           {saving ? "Saving..." : submitLabel}
         </button>
@@ -190,11 +190,11 @@ const MyLink = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900">
+          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
             My Links
           </h1>
 
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
             Manage the links displayed on your Tied profile.
           </p>
         </div>
@@ -205,7 +205,7 @@ const MyLink = () => {
             setAdding(true);
             setEditingId(null);
           }}
-          className="bg-slate-900 text-white px-5 py-3 rounded-lg hover:bg-slate-700 transition"
+          className="bg-slate-900 text-white px-5 py-3 rounded-lg hover:bg-slate-700 transition dark:bg-teal-600 dark:hover:bg-teal-700"
         >
           + Add Link
         </button>
@@ -214,7 +214,7 @@ const MyLink = () => {
 
 
       {error && (
-        <p className="mt-6 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+        <p className="mt-6 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3 dark:text-red-300 dark:bg-red-950/40 dark:border-red-900">
           {error}
         </p>
       )}
@@ -236,11 +236,11 @@ const MyLink = () => {
       <div className="mt-8 space-y-4">
 
         {!links && !error && (
-          <p className="text-gray-500">Loading links...</p>
+          <p className="text-gray-500 dark:text-gray-400">Loading links...</p>
         )}
 
         {links?.length === 0 && !adding && (
-          <div className="bg-white rounded-xl border border-dashed border-gray-300 p-10 text-center text-gray-500">
+          <div className="bg-white rounded-xl border border-dashed border-gray-300 p-10 text-center text-gray-500 dark:bg-slate-900 dark:border-slate-600 dark:text-gray-400">
             You haven't added any links yet. Click <span className="font-medium">+ Add Link</span> to get started.
           </div>
         )}
@@ -262,7 +262,7 @@ const MyLink = () => {
               onDragEnter={() => handleDragEnter(index)}
               onDragOver={(e) => e.preventDefault()}
               onDragEnd={handleDragEnd}
-              className={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:shadow-md transition ${
+              className={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:shadow-md transition dark:bg-slate-900 dark:border-slate-700 ${
                 dragIndex === index ? "opacity-50" : ""
               }`}
             >
@@ -271,22 +271,22 @@ const MyLink = () => {
               <div className="flex items-center gap-4 min-w-0">
 
                 {/* Drag Handle */}
-                <div className="text-gray-400 cursor-grab text-xl" title="Drag to reorder">
+                <div className="text-gray-400 cursor-grab text-xl dark:text-gray-500" title="Drag to reorder">
                   ⋮⋮
                 </div>
 
                 {/* Icon */}
-                <div className="w-12 h-12 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-2xl">
+                <div className="w-12 h-12 shrink-0 rounded-lg bg-slate-100 flex items-center justify-center text-2xl dark:bg-slate-950">
                   <LinkIcon url={link.url} icon={link.icon} />
                 </div>
 
                 {/* Link Information */}
                 <div className="min-w-0">
-                  <h2 className="text-lg font-semibold text-gray-900 truncate">
+                  <h2 className="text-lg font-semibold text-gray-900 truncate dark:text-gray-100">
                     {link.title}
                   </h2>
 
-                  <p className="text-sm text-gray-500 mt-1 truncate">
+                  <p className="text-sm text-gray-500 mt-1 truncate dark:text-gray-400">
                     {link.url.replace(/^https?:\/\//, "")}
                   </p>
                 </div>
@@ -299,11 +299,11 @@ const MyLink = () => {
 
                 {/* Clicks */}
                 <div className="text-right">
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-400 dark:text-gray-500">
                     CLICKS
                   </p>
 
-                  <p className="font-semibold text-gray-900 mt-1">
+                  <p className="font-semibold text-gray-900 mt-1 dark:text-gray-100">
                     {link.clicks.toLocaleString()}
                   </p>
                 </div>
@@ -314,7 +314,7 @@ const MyLink = () => {
                   type="button"
                   onClick={() => handleUpdate(link._id, { active: !link.active })}
                   title={link.active ? "Hide from profile" : "Show on profile"}
-                  className={`flex items-center gap-2 text-sm rounded-lg px-2 py-1 hover:bg-gray-100 ${
+                  className={`flex items-center gap-2 text-sm rounded-lg px-2 py-1 hover:bg-gray-100 dark:hover:bg-slate-800 ${
                     link.active
                       ? "text-green-600"
                       : "text-gray-400"
@@ -334,7 +334,7 @@ const MyLink = () => {
                     type="button"
                     aria-label="More options"
                     onClick={() => setMenuId(menuId === link._id ? null : link._id)}
-                    className="text-xl text-gray-400 hover:text-gray-900 px-2"
+                    className="text-xl text-gray-400 hover:text-gray-900 px-2 dark:text-gray-500 dark:hover:text-gray-100"
                   >
                     ⋮
                   </button>
@@ -343,7 +343,7 @@ const MyLink = () => {
                     <>
                       <div className="fixed inset-0 z-10" onClick={() => setMenuId(null)}></div>
 
-                      <div className="absolute right-0 mt-2 z-20 w-36 bg-white border border-gray-200 rounded-lg shadow-lg py-1 text-sm">
+                      <div className="absolute right-0 mt-2 z-20 w-36 bg-white border border-gray-200 rounded-lg shadow-lg py-1 text-sm dark:bg-slate-900 dark:border-slate-700">
                         <button
                           type="button"
                           onClick={() => {
@@ -351,7 +351,7 @@ const MyLink = () => {
                             setAdding(false);
                             setEditingId(link._id);
                           }}
-                          className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                          className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-800"
                         >
                           Edit
                         </button>
@@ -361,7 +361,7 @@ const MyLink = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={() => setMenuId(null)}
-                          className="block px-4 py-2 hover:bg-gray-100"
+                          className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-slate-800"
                         >
                           Open link
                         </a>
@@ -372,7 +372,7 @@ const MyLink = () => {
                             setMenuId(null);
                             handleDelete(link);
                           }}
-                          className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50"
+                          className="block w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40"
                         >
                           Delete
                         </button>

@@ -22,11 +22,11 @@ const Analytics = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
         <div>
-          <h1 className="text-3xl font-extrabold text-gray-900">
+          <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
             Analytics
           </h1>
 
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-gray-600 dark:text-gray-400">
             Track how people interact with your Tied profile.
           </p>
         </div>
@@ -36,7 +36,7 @@ const Analytics = () => {
           value={days}
           onChange={(e) => setDays(Number(e.target.value))}
           aria-label="Date range"
-          className="bg-white border border-gray-200 px-4 py-3 rounded-lg text-gray-700 outline-none"
+          className="bg-white border border-gray-200 px-4 py-3 rounded-lg text-gray-700 outline-none dark:bg-slate-900 dark:border-slate-700 dark:text-gray-300"
         >
           {RANGES.map((range) => (
             <option key={range.days} value={range.days}>
@@ -49,13 +49,13 @@ const Analytics = () => {
 
 
       {error && (
-        <p className="mt-6 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+        <p className="mt-6 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3 dark:text-red-300 dark:bg-red-950/40 dark:border-red-900">
           {error}
         </p>
       )}
 
       {!data && !error && (
-        <p className="mt-8 text-gray-500">Loading analytics...</p>
+        <p className="mt-8 text-gray-500 dark:text-gray-400">Loading analytics...</p>
       )}
 
       {data && (
@@ -86,16 +86,16 @@ const Analytics = () => {
 
 
           {/* Main Chart */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 mt-6 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 mt-6 p-6 dark:bg-slate-900 dark:border-slate-700">
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
 
               <div>
-                <h2 className="text-xl font-semibold text-gray-900">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                   Profile Performance
                 </h2>
 
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
                   Views and clicks over time
                 </p>
               </div>
@@ -114,13 +114,13 @@ const Analytics = () => {
 
 
             {/* Top Links */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 dark:bg-slate-900 dark:border-slate-700">
 
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 Top Links
               </h2>
 
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
                 Your most clicked links (all time)
               </p>
 
@@ -128,7 +128,7 @@ const Analytics = () => {
               <div className="mt-6 space-y-5">
 
                 {data.topLinks.length === 0 && (
-                  <p className="text-gray-400 text-sm">No links yet</p>
+                  <p className="text-gray-400 text-sm dark:text-gray-500">No links yet</p>
                 )}
 
                 {data.topLinks.map((link) => (
@@ -144,13 +144,13 @@ const Analytics = () => {
 
 
             {/* Traffic Sources */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 dark:bg-slate-900 dark:border-slate-700">
 
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 Traffic Sources
               </h2>
 
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
                 Where your visitors are coming from
               </p>
 
@@ -158,7 +158,7 @@ const Analytics = () => {
               <div className="mt-6 space-y-5">
 
                 {data.sources.length === 0 && (
-                  <p className="text-gray-400 text-sm">No visitors in this period yet</p>
+                  <p className="text-gray-400 text-sm dark:text-gray-500">No visitors in this period yet</p>
                 )}
 
                 {data.sources.map((source) => (
@@ -168,9 +168,9 @@ const Analytics = () => {
                       <span className="font-semibold">{source.percent}%</span>
                     </div>
 
-                    <div className="h-2 bg-gray-100 rounded-full">
+                    <div className="h-2 bg-gray-100 rounded-full dark:bg-slate-800">
                       <div
-                        className="h-2 bg-slate-800 rounded-full"
+                        className="h-2 bg-slate-800 rounded-full dark:bg-teal-500"
                         style={{ width: `${source.percent}%` }}
                       ></div>
                     </div>

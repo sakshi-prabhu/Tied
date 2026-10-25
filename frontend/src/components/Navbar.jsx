@@ -2,6 +2,7 @@ import { useState } from "react";
 import tiedImage from "../assets/tied.jpeg";
 import { Link } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
+import ThemeToggle from "./ThemeToggle.jsx";
 
 const navLinks = [
   { label: "Home", href: "#home" },
@@ -45,6 +46,8 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
+
           {/* Get Started */}
           <Link
             to="/signin"

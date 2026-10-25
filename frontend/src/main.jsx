@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import "./index.css";
+import { applyTheme } from "./utils/theme.js";
 
 import LandingPage from "./pages/LandingPage.jsx";
 
@@ -58,6 +59,8 @@ export const App = () => {
     </Routes>
   );
 };
+
+applyTheme();
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

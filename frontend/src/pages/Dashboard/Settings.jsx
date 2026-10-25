@@ -111,24 +111,24 @@ const Settings = () => {
 
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-extrabold text-gray-900">
+        <h1 className="text-3xl font-extrabold text-gray-900 dark:text-gray-100">
           Settings
         </h1>
 
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-gray-600 dark:text-gray-400">
           Manage your Tied account and profile settings.
         </p>
       </div>
 
 
       {/* Profile Settings */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-8">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-8 dark:bg-slate-900 dark:border-slate-700">
 
-        <h2 className="text-xl font-semibold text-gray-900">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
           Profile Settings
         </h2>
 
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
           Manage the information associated with your profile.
         </p>
 
@@ -136,13 +136,13 @@ const Settings = () => {
         {/* Username */}
         <div className="mt-6">
 
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Username
           </label>
 
           <div className="flex mt-2">
 
-            <span className="bg-gray-100 border border-gray-200 border-r-0 rounded-l-lg px-3 sm:px-4 py-3 text-gray-500">
+            <span className="bg-gray-100 border border-gray-200 border-r-0 rounded-l-lg px-3 sm:px-4 py-3 text-gray-500 dark:bg-slate-800 dark:border-slate-700 dark:text-gray-400">
               {window.location.host}/
             </span>
 
@@ -151,7 +151,7 @@ const Settings = () => {
               aria-label="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="flex-1 min-w-0 p-3 border border-gray-200 rounded-r-lg"
+              className="flex-1 min-w-0 p-3 border border-gray-200 rounded-r-lg dark:border-slate-700"
             />
 
           </div>
@@ -162,7 +162,7 @@ const Settings = () => {
         {/* Email */}
         <div className="mt-6">
 
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Email Address
           </label>
 
@@ -171,7 +171,7 @@ const Settings = () => {
             aria-label="Email Address"
             value={user.email}
             readOnly
-            className="w-full mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50"
+            className="w-full mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50 dark:border-slate-700 dark:bg-slate-950"
           />
 
         </div>
@@ -184,7 +184,7 @@ const Settings = () => {
           type="button"
           onClick={handleSaveProfile}
           disabled={busy === "profile" || username === profile.username}
-          className="mt-6 bg-slate-900 text-white px-5 py-3 rounded-lg hover:bg-slate-700 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="mt-6 bg-slate-900 text-white px-5 py-3 rounded-lg hover:bg-slate-700 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-teal-600 dark:hover:bg-teal-700"
         >
           {busy === "profile" ? "Saving..." : "Save Changes"}
         </button>
@@ -193,13 +193,13 @@ const Settings = () => {
 
 
       {/* Account Settings */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-6">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-6 dark:bg-slate-900 dark:border-slate-700">
 
-        <h2 className="text-xl font-semibold text-gray-900">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
           Account
         </h2>
 
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
           Manage your account security.
         </p>
 
@@ -208,14 +208,14 @@ const Settings = () => {
 
           {/* Change Password */}
           {hasPassword && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg dark:border-slate-700">
 
             <div>
-              <h3 className="font-medium text-gray-900">
+              <h3 className="font-medium text-gray-900 dark:text-gray-100">
                 Password
               </h3>
 
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
                 We'll email you a link to set a new password.
               </p>
             </div>
@@ -224,7 +224,7 @@ const Settings = () => {
               type="button"
               onClick={handleChangePassword}
               disabled={busy === "password"}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-60"
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-60 dark:border-slate-600 dark:hover:bg-slate-800"
             >
               {busy === "password" ? "Sending..." : "Change Password"}
             </button>
@@ -234,14 +234,14 @@ const Settings = () => {
 
 
           {/* Logout */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg dark:border-slate-700">
 
             <div>
-              <h3 className="font-medium text-gray-900">
+              <h3 className="font-medium text-gray-900 dark:text-gray-100">
                 Sign Out
               </h3>
 
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
                 Sign out of your Tied account.
               </p>
             </div>
@@ -249,7 +249,7 @@ const Settings = () => {
             <button
               type="button"
               onClick={handleSignOut}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 dark:border-slate-600 dark:hover:bg-slate-800"
             >
               Sign Out
             </button>
@@ -264,13 +264,13 @@ const Settings = () => {
 
 
       {/* Danger Zone */}
-      <div className="bg-white rounded-xl shadow-sm border border-red-200 p-6 mt-6">
+      <div className="bg-white rounded-xl shadow-sm border border-red-200 p-6 mt-6 dark:bg-slate-900 dark:border-red-900">
 
-        <h2 className="text-xl font-semibold text-red-600">
+        <h2 className="text-xl font-semibold text-red-600 dark:text-red-400">
           Danger Zone
         </h2>
 
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
           These actions can permanently affect your account.
         </p>
 
@@ -278,11 +278,11 @@ const Settings = () => {
         <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
 
           <div>
-            <h3 className="font-medium text-gray-900">
+            <h3 className="font-medium text-gray-900 dark:text-gray-100">
               Delete Account
             </h3>
 
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
               Permanently delete your Tied account and all associated data.
             </p>
           </div>

@@ -23,7 +23,7 @@ const niceMax = (value) => {
 export const SeriesLegend = () => (
   <div className="flex gap-4 text-sm">
     {SERIES.map((s) => (
-      <span key={s.key} className="flex items-center gap-2 text-gray-600">
+      <span key={s.key} className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
         <span className="w-3 h-0.5 rounded-full" style={{ backgroundColor: s.color }}></span>
         {s.label}
       </span>
@@ -86,9 +86,9 @@ const PerformanceChart = ({ series }) => {
                   x2={width - PAD.right}
                   y1={y(value)}
                   y2={y(value)}
-                  stroke={i === 0 ? "#d1d5db" : "#f3f4f6"}
+                  className={i === 0 ? "stroke-gray-300 dark:stroke-slate-600" : "stroke-gray-100 dark:stroke-slate-800"}
                 />
-                <text x={PAD.left - 8} y={y(value)} dy="0.32em" textAnchor="end" fontSize="11" fill="#9ca3af">
+                <text x={PAD.left - 8} y={y(value)} dy="0.32em" textAnchor="end" fontSize="11" className="fill-gray-400 dark:fill-gray-500">
                   {value.toLocaleString()}
                 </text>
               </g>
@@ -98,7 +98,7 @@ const PerformanceChart = ({ series }) => {
           {/* X labels */}
           {series.map((d, i) =>
             i % labelEvery === 0 ? (
-              <text key={d.date} x={x(i)} y={HEIGHT - 8} textAnchor="middle" fontSize="11" fill="#9ca3af">
+              <text key={d.date} x={x(i)} y={HEIGHT - 8} textAnchor="middle" fontSize="11" className="fill-gray-400 dark:fill-gray-500">
                 {formatDate(d.date)}
               </text>
             ) : null
@@ -111,7 +111,7 @@ const PerformanceChart = ({ series }) => {
               x2={x(hoverIndex)}
               y1={PAD.top}
               y2={PAD.top + plotHeight}
-              stroke="#9ca3af"
+              className="stroke-gray-400 dark:stroke-gray-500"
             />
           )}
 
@@ -137,7 +137,7 @@ const PerformanceChart = ({ series }) => {
                 cy={y(hovered[s.key])}
                 r="4"
                 fill={s.color}
-                stroke="#ffffff"
+                className="stroke-white dark:stroke-slate-900"
                 strokeWidth="2"
               />
             ))}
@@ -146,7 +146,7 @@ const PerformanceChart = ({ series }) => {
 
       {isEmpty && (
         <div className="absolute inset-x-0 top-0 flex items-center justify-center pointer-events-none" style={{ height: HEIGHT - PAD.bottom }}>
-          <span className="text-gray-400 text-sm bg-white px-3">
+          <span className="text-gray-400 text-sm bg-white px-3 dark:text-gray-500 dark:bg-slate-900">
             No views or clicks in this period yet
           </span>
         </div>
@@ -155,18 +155,18 @@ const PerformanceChart = ({ series }) => {
       {/* Tooltip */}
       {hovered && (
         <div
-          className="absolute top-2 pointer-events-none bg-white border border-gray-200 rounded-lg shadow-md px-3 py-2 text-sm whitespace-nowrap"
+          className="absolute top-2 pointer-events-none bg-white border border-gray-200 rounded-lg shadow-md px-3 py-2 text-sm whitespace-nowrap dark:bg-slate-900 dark:border-slate-700"
           style={{
             left: x(hoverIndex),
             transform: `translateX(${hoverIndex > series.length / 2 ? "calc(-100% - 12px)" : "12px"})`,
           }}
         >
-          <p className="text-gray-500 text-xs mb-1">{formatDate(hovered.date)}</p>
+          <p className="text-gray-500 text-xs mb-1 dark:text-gray-400">{formatDate(hovered.date)}</p>
           {SERIES.map((s) => (
             <p key={s.key} className="flex items-center gap-2">
               <span className="w-3 h-0.5 rounded-full" style={{ backgroundColor: s.color }}></span>
-              <span className="font-semibold text-gray-900">{hovered[s.key].toLocaleString()}</span>
-              <span className="text-gray-500">{s.label}</span>
+              <span className="font-semibold text-gray-900 dark:text-gray-100">{hovered[s.key].toLocaleString()}</span>
+              <span className="text-gray-500 dark:text-gray-400">{s.label}</span>
             </p>
           ))}
         </div>

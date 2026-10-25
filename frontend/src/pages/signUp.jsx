@@ -102,7 +102,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-6">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-6 dark:bg-slate-950">
       <div className="w-full max-w-md">
 
         {/* Logo */}
@@ -110,7 +110,7 @@ const SignUp = () => {
           <Link to="/">
             <img src={tiedImage} alt="Tied logo" className="w-16 h-16 rounded-xl object-cover mx-auto" />
           </Link>
-          <p className="text-gray-500 mt-3">
+          <p className="text-gray-500 mt-3 dark:text-gray-400">
             Create your account and get started.
           </p>
         </div>
@@ -118,22 +118,22 @@ const SignUp = () => {
         {/* Card */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white border-t-4 border-teal-600 rounded-2xl shadow-2xl p-6 sm:p-8"
+          className="bg-white border-t-4 border-teal-600 rounded-2xl shadow-2xl p-6 sm:p-8 dark:bg-slate-900"
         >
 
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6 dark:text-gray-100">
             Create Account
           </h2>
 
           {error && (
-            <p className="mb-5 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+            <p className="mb-5 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-3 dark:text-red-300 dark:bg-red-950/40 dark:border-red-900">
               {error}
             </p>
           )}
 
           {/* Name */}
           <div className="mb-5">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               Full Name
             </label>
 
@@ -152,7 +152,7 @@ const SignUp = () => {
 
           {/* Username */}
           <div className="mb-5">
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               Username
             </label>
 
@@ -171,7 +171,7 @@ const SignUp = () => {
 
           {/* Email */}
           <div className="mb-5">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               Email
             </label>
 
@@ -190,7 +190,7 @@ const SignUp = () => {
 
           {/* Password */}
           <div className="mb-5">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               Password
             </label>
 
@@ -209,7 +209,7 @@ const SignUp = () => {
 
           {/* Confirm Password */}
           <div className="mb-5">
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-300">
               Confirm Password
             </label>
 
@@ -237,13 +237,13 @@ const SignUp = () => {
 
           {/* Divider */}
           <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-gray-200"></div>
+            <div className="flex-1 h-px bg-gray-200 dark:bg-slate-700"></div>
 
-            <span className="text-sm text-gray-400">
+            <span className="text-sm text-gray-400 dark:text-gray-500">
               OR
             </span>
 
-            <div className="flex-1 h-px bg-gray-200"></div>
+            <div className="flex-1 h-px bg-gray-200 dark:bg-slate-700"></div>
           </div>
 
           {/* Google */}
@@ -251,17 +251,17 @@ const SignUp = () => {
             type="button"
             onClick={handleGoogle}
             disabled={submitting}
-            className="w-full border border-gray-300 py-3 rounded-lg font-medium text-gray-700 hover:bg-teal-50 transition disabled:opacity-60 disabled:cursor-not-allowed"
+            className="w-full border border-gray-300 py-3 rounded-lg font-medium text-gray-700 hover:bg-teal-50 transition disabled:opacity-60 disabled:cursor-not-allowed dark:border-slate-600 dark:text-gray-300 dark:hover:bg-teal-950/40"
           >
             Continue with Google
           </button>
 
           {/* Sign In */}
-          <p className="text-center text-sm text-gray-500 mt-6">
+          <p className="text-center text-sm text-gray-500 mt-6 dark:text-gray-400">
             Already have an account?{" "}
             <Link
               to="/signin"
-              className="text-teal-700 font-medium hover:text-teal-800 hover:underline"
+              className="text-teal-700 font-medium hover:text-teal-800 hover:underline dark:text-teal-400 dark:hover:text-teal-300"
             >
               Sign In
             </Link>

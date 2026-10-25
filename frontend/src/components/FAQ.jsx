@@ -41,10 +41,10 @@ const FAQ = () => {
   };
 
   return (
-    <section id="faq" className="bg-slate-100 py-10 px-6">
+    <section id="faq" className="bg-slate-100 py-10 px-6 dark:bg-slate-950">
       <div className="max-w-7xl mx-auto">
     
-        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-gray-900 mb-10">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-gray-900 mb-10 dark:text-gray-100">
           Frequently Asked Questions
         </h2>
 
@@ -53,24 +53,24 @@ const FAQ = () => {
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
+              className="bg-white rounded-lg shadow-md overflow-hidden dark:bg-slate-900"
             >
               <div
                 onClick={() => handleClick(index)}
                 className="p-4 sm:p-6 flex justify-between items-center cursor-pointer"
               >
-                <h3 className="text-lg font-semibold text-gray-900">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   {index + 1}. {faq.question}
                 </h3>
 
-                <span className="text-2xl font-medium text-teal-600 ml-4">
+                <span className="text-2xl font-medium text-teal-600 ml-4 dark:text-teal-400">
                   {openIndex === index ? "−" : "+"}
                 </span>
               </div>
 
               {openIndex === index && (
                 <div className="px-4 sm:px-6 pb-6">
-                  <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                  <p className="text-gray-600 leading-relaxed dark:text-gray-400">{faq.answer}</p>
                 </div>
               )}
             </div>

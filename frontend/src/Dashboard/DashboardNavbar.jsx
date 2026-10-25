@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { HiMenu, HiX } from "react-icons/hi";
 import tiedImage from "../assets/tied.jpeg";
 import { useAuth } from "../context/AuthContext.jsx";
+import ThemeToggle from "../components/ThemeToggle.jsx";
 
 const DashboardNavbar = ({ onMenuClick, sidebarOpen }) => {
   const { profile } = useAuth();
@@ -33,21 +34,25 @@ const DashboardNavbar = ({ onMenuClick, sidebarOpen }) => {
         </Link>
       </div>
 
-      {/* Profile picture, opens the profile editor */}
-      <Link
-        to="/dashboard/appearance"
-        aria-label="Edit profile"
-        title="Edit profile"
-        className="shrink-0 rounded-full ring-2 ring-white/20 hover:ring-white/60 transition"
-      >
-        {profile?.avatarUrl ? (
-          <img src={profile.avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover" />
-        ) : (
-          <div className="w-10 h-10 rounded-full bg-slate-600 flex items-center justify-center font-semibold">
-            {initial}
-          </div>
-        )}
-      </Link>
+      <div className="flex items-center gap-3">
+        <ThemeToggle />
+
+        {/* Profile picture, opens the profile editor */}
+        <Link
+          to="/dashboard/appearance"
+          aria-label="Edit profile"
+          title="Edit profile"
+          className="shrink-0 rounded-full ring-2 ring-white/20 hover:ring-white/60 transition"
+        >
+          {profile?.avatarUrl ? (
+            <img src={profile.avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover" />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-slate-600 flex items-center justify-center font-semibold">
+              {initial}
+            </div>
+          )}
+        </Link>
+      </div>
     </nav>
   );
 };

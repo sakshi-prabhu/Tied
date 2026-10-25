@@ -33,11 +33,11 @@ const PublicProfile = () => {
   if (notFound) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 text-center px-4">
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           This profile doesn't exist
         </h1>
 
-        <Link to="/" className="text-teal-700 hover:underline">
+        <Link to="/" className="text-teal-700 hover:underline dark:text-teal-400">
           Create your own Tied profile
         </Link>
       </div>
@@ -46,7 +46,7 @@ const PublicProfile = () => {
 
   if (!profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-500">
+      <div className="min-h-screen flex items-center justify-center text-gray-500 dark:text-gray-400">
         Loading...
       </div>
     );
