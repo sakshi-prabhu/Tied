@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import api, { getApiErrorMessage } from "../../services/api.js";
 import ProfileView from "../../components/ProfileView.jsx";
+import resizeImage from "../../utils/resizeImage.js";
 
 const THEME_OPTIONS = [
   { value: "light", label: "Light", className: "bg-white" },
@@ -30,12 +31,14 @@ const Appearance = () => {
   const [form, setForm] = useState({
     displayName: profile.displayName || "",
     bio: profile.bio || "",
-    avatarUrl: profile.avatarUrl || "",
     appearance: { ...profile.appearance },
   });
   const [links, setLinks] = useState([]);
   const [status, setStatus] = useState({ type: "", message: "" });
   const [saving, setSaving] = useState(false);
+  const [imageStatus, setImageStatus] = useState({ type: "", message: "" });
+  const [imageBusy, setImageBusy] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     api.get("/links").then((res) => setLinks(res.data.filter((link) => link.active)));
@@ -47,6 +50,51 @@ const Appearance = () => {
 
   const setAppearance = (key, value) => {
     setForm({ ...form, appearance: { ...form.appearance, [key]: value } });
+  };
+
+  // The picture saves right away, separately from "Save Changes"
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    e.target.value = "";
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setImageStatus({ type: "error", message: "Please choose an image file." });
+      return;
+    }
+
+    setImageBusy(true);
+    setImageStatus({ type: "", message: "" });
+
+    try {
+      const image = await resizeImage(file);
+      const { data } = await api.put("/users/me/avatar", image, {
+        headers: { "Content-Type": "image/jpeg" },
+      });
+      setProfile(data);
+      setImageStatus({ type: "success", message: "Profile picture updated." });
+    } catch (err) {
+      setImageStatus({
+        type: "error",
+        message: err.isAxiosError ? getApiErrorMessage(err) : "We couldn't read that image. Try a JPEG or PNG.",
+      });
+    } finally {
+      setImageBusy(false);
+    }
+  };
+
+  const handleImageRemove = async () => {
+    setImageBusy(true);
+    setImageStatus({ type: "", message: "" });
+
+    try {
+      const { data } = await api.delete("/users/me/avatar");
+      setProfile(data);
+    } catch (err) {
+      setImageStatus({ type: "error", message: getApiErrorMessage(err) });
+    } finally {
+      setImageBusy(false);
+    }
   };
 
   const handleSave = async () => {
@@ -98,14 +146,14 @@ const Appearance = () => {
           {/* Profile Image */}
           <div className="mt-8">
 
-            <label htmlFor="avatarUrl" className="block text-sm font-medium text-gray-700">
-              Profile Image URL
+            <label className="block text-sm font-medium text-gray-700">
+              Profile Image
             </label>
 
             <div className="flex items-center gap-5 mt-3">
 
-              {form.avatarUrl ? (
-                <img src={form.avatarUrl} alt="" className="w-20 h-20 shrink-0 rounded-full object-cover" />
+              {profile.avatarUrl ? (
+                <img src={profile.avatarUrl} alt="" className={`w-20 h-20 shrink-0 rounded-full object-cover ${imageBusy ? "opacity-50" : ""}`} />
               ) : (
                 <div className="w-20 h-20 shrink-0 rounded-full bg-slate-200 flex items-center justify-center text-2xl">
                   👤
@@ -113,16 +161,41 @@ const Appearance = () => {
               )}
 
               <input
-                id="avatarUrl"
-                name="avatarUrl"
-                type="url"
-                value={form.avatarUrl}
-                onChange={handleChange}
-                placeholder="https://example.com/photo.jpg"
-                className="w-full min-w-0 p-3 border border-gray-200 rounded-lg"
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
               />
 
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current.click()}
+                  disabled={imageBusy}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-60"
+                >
+                  {imageBusy ? "Uploading..." : profile.avatarUrl ? "Change Image" : "Upload Image"}
+                </button>
+
+                {profile.avatarUrl && !imageBusy && (
+                  <button
+                    type="button"
+                    onClick={handleImageRemove}
+                    className="px-4 py-2 text-red-600 rounded-lg hover:bg-red-50"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+
             </div>
+
+            {imageStatus.message && (
+              <p className={`mt-3 text-sm ${imageStatus.type === "error" ? "text-red-600" : "text-green-600"}`}>
+                {imageStatus.message}
+              </p>
+            )}
 
           </div>
 

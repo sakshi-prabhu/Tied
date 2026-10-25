@@ -1,5 +1,6 @@
 const User = require("./User");
 const Link = require("./Link");
 const AnalyticsEvent = require("./AnalyticsEvent");
+const Avatar = require("./Avatar");
 
-module.exports = { User, Link, AnalyticsEvent };
+module.exports = { User, Link, AnalyticsEvent, Avatar };

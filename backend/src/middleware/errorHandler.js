@@ -17,6 +17,11 @@ const errorHandler = (err, req, res, next) => {
     return res.status(409).json({ message: `That ${field} is already taken` });
   }
 
+  // Request body bigger than the route allows (e.g. a huge image)
+  if (err.type === "entity.too.large") {
+    return res.status(413).json({ message: "That file is too large" });
+  }
+
   console.error(err);
   res.status(500).json({ message: "Something went wrong" });
 };

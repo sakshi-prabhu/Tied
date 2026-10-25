@@ -1,13 +1,16 @@
 const express = require("express");
-const { User, Link, AnalyticsEvent } = require("../models");
+const { User, Link, AnalyticsEvent, Avatar } = require("../models");
 const { verifyToken, requireProfile } = require("../middleware/auth");
 
 const router = express.Router();
 
 const USERNAME_PATTERN = /^[a-z0-9_.]{3,30}$/;
 
-// Fields the owner is allowed to change through PATCH /me
-const EDITABLE_FIELDS = ["username", "displayName", "bio", "avatarUrl"];
+const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
+
+// Fields the owner is allowed to change through PATCH /me (the picture goes through /me/avatar)
+const EDITABLE_FIELDS = ["username", "displayName", "bio"];
 const APPEARANCE_FIELDS = ["theme", "buttonStyle", "backgroundColor", "buttonColor", "textColor"];
 
 // Builds a free username from the email for sign-ups that don't pick one (e.g. Google)
@@ -89,11 +92,46 @@ router.patch("/me", verifyToken, requireProfile, async (req, res) => {
   res.json(req.user);
 });
 
+// Upload a profile picture: send the image bytes as the body with its Content-Type
+router.put(
+  "/me/avatar",
+  verifyToken,
+  requireProfile,
+  express.raw({ type: AVATAR_TYPES, limit: MAX_AVATAR_BYTES }),
+  async (req, res) => {
+    if (!Buffer.isBuffer(req.body) || !req.body.length) {
+      return res.status(400).json({ message: "Please upload a JPEG, PNG or WebP image" });
+    }
+
+    await Avatar.findOneAndUpdate(
+      { user: req.user._id },
+      { data: req.body, contentType: req.get("content-type") },
+      { upsert: true }
+    );
+
+    // The version query string makes browsers fetch the new picture instead of a cached one
+    req.user.avatarUrl = `${req.protocol}://${req.get("host")}/api/public/avatars/${req.user._id}?v=${Date.now()}`;
+    await req.user.save();
+
+    res.json(req.user);
+  }
+);
+
+router.delete("/me/avatar", verifyToken, requireProfile, async (req, res) => {
+  await Avatar.deleteOne({ user: req.user._id });
+
+  req.user.avatarUrl = "";
+  await req.user.save();
+
+  res.json(req.user);
+});
+
 // Deletes the Tied profile and all its data (the Firebase account is removed client-side)
 router.delete("/me", verifyToken, requireProfile, async (req, res) => {
   await Promise.all([
     Link.deleteMany({ user: req.user._id }),
     AnalyticsEvent.deleteMany({ user: req.user._id }),
+    Avatar.deleteOne({ user: req.user._id }),
     req.user.deleteOne(),
   ]);
 

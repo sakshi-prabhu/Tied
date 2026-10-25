@@ -1,7 +1,23 @@
 const express = require("express");
-const { User, Link, AnalyticsEvent } = require("../models");
+const { User, Link, AnalyticsEvent, Avatar } = require("../models");
 
 const router = express.Router();
+
+// Uploaded profile pictures. Each upload gets a new URL, so it can be cached forever.
+router.get("/avatars/:userId", async (req, res) => {
+  const avatar = await Avatar.findOne({ user: req.params.userId });
+
+  if (!avatar) {
+    return res.status(404).json({ message: "Image not found" });
+  }
+
+  res.set({
+    "Content-Type": avatar.contentType,
+    "Cache-Control": "public, max-age=31536000, immutable",
+    "X-Content-Type-Options": "nosniff",
+  });
+  res.send(avatar.data);
+});
 
 // Public profile page data: tied.app/<username>
 router.get("/:username", async (req, res) => {
