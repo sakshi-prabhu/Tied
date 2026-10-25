@@ -6,6 +6,13 @@ import { getAuthErrorMessage } from "../../firebase/authErrors.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import api, { getApiErrorMessage } from "../../services/api.js";
 import { profileUrl, profileUrlPrefix, USERNAME_PATTERN } from "../../utils/profileUrl.js";
+import HelpSection from "../../Dashboard/HelpSection.jsx";
+import {
+  HiOutlineExclamation,
+  HiOutlineQuestionMarkCircle,
+  HiOutlineShieldCheck,
+  HiOutlineUser,
+} from "react-icons/hi";
 
 const AVAILABILITY_MESSAGES = {
   checking: { className: "text-gray-500 dark:text-gray-400", text: "Checking..." },
@@ -20,13 +27,69 @@ const Message = ({ status }) =>
     <p
       className={`mt-4 text-sm rounded-lg px-4 py-3 border ${
         status.type === "error"
-          ? "text-red-700 bg-red-50 border-red-200"
-          : "text-green-700 bg-green-50 border-green-200"
+          ? "text-red-700 bg-red-50 border-red-200 dark:text-red-300 dark:bg-red-950/40 dark:border-red-900"
+          : "text-green-700 bg-green-50 border-green-200 dark:text-green-300 dark:bg-green-950/40 dark:border-green-900"
       }`}
     >
       {status.message}
     </p>
   ) : null;
+
+// Card with an icon header, used for every settings group
+const Section = ({ icon: Icon, title, description, danger, children }) => (
+  <section
+    className={`bg-white rounded-xl shadow-sm border mt-6 dark:bg-slate-900 ${
+      danger ? "border-red-200 dark:border-red-900" : "border-gray-200 dark:border-slate-700"
+    }`}
+  >
+    <div
+      className={`flex items-start gap-4 px-6 py-5 border-b ${
+        danger ? "border-red-100 dark:border-red-900/60" : "border-gray-100 dark:border-slate-800"
+      }`}
+    >
+      <div
+        className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-xl ${
+          danger
+            ? "bg-red-50 text-red-600 dark:bg-red-950/50 dark:text-red-400"
+            : "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-gray-300"
+        }`}
+      >
+        <Icon />
+      </div>
+
+      <div>
+        <h2 className={`text-lg font-semibold ${danger ? "text-red-600 dark:text-red-400" : "text-gray-900 dark:text-gray-100"}`}>
+          {title}
+        </h2>
+
+        <p className="text-sm text-gray-500 mt-0.5 dark:text-gray-400">
+          {description}
+        </p>
+      </div>
+    </div>
+
+    <div className="px-6 py-5">
+      {children}
+    </div>
+  </section>
+);
+
+// Label + help text on the left, action on the right
+const SettingRow = ({ title, description, children }) => (
+  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 py-4 first:pt-0 last:pb-0">
+    <div>
+      <h3 className="font-medium text-gray-900 dark:text-gray-100">
+        {title}
+      </h3>
+
+      <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
+        {description}
+      </p>
+    </div>
+
+    {children}
+  </div>
+);
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -154,8 +217,11 @@ const Settings = () => {
     }
   };
 
+  const secondaryButton =
+    "shrink-0 px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed dark:border-slate-600 dark:text-gray-200 dark:hover:bg-slate-800";
+
   return (
-    <div>
+    <div className="max-w-4xl">
 
       {/* Header */}
       <div>
@@ -164,27 +230,22 @@ const Settings = () => {
         </h1>
 
         <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Manage your Tied account and profile settings.
+          Manage your profile, account security, and find help using Tied.
         </p>
       </div>
 
 
-      {/* Profile Settings */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-8 dark:bg-slate-900 dark:border-slate-700">
-
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          Profile Settings
-        </h2>
-
-        <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
-          Manage the information associated with your profile.
-        </p>
-
+      {/* Profile */}
+      <Section
+        icon={HiOutlineUser}
+        title="Profile"
+        description="Your public link and the email on your account."
+      >
 
         {/* Username */}
-        <div className="mt-6">
+        <div>
 
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Profile Link
           </label>
 
@@ -192,21 +253,21 @@ const Settings = () => {
             Your username is your public link. Pick something easy to remember.
           </p>
 
-          <div className="flex mt-2">
+          <div className="flex mt-2 rounded-lg focus-within:ring-2 focus-within:ring-teal-600">
 
-            <span className="bg-gray-100 border border-gray-200 border-r-0 rounded-l-lg px-3 sm:px-4 py-3 text-gray-500 dark:bg-slate-800 dark:border-slate-700 dark:text-gray-400">
+            <span className="bg-gray-100 border border-gray-300 border-r-0 rounded-l-lg px-3 sm:px-4 py-2.5 text-sm text-gray-500 flex items-center dark:bg-slate-800 dark:border-slate-600 dark:text-gray-400">
               {profileUrlPrefix()}
             </span>
 
             <input
+              id="username"
               type="text"
-              aria-label="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value.replace(/\s/g, ""))}
               maxLength={30}
               autoCapitalize="none"
               spellCheck={false}
-              className="flex-1 min-w-0 p-3 border border-gray-200 rounded-r-lg dark:border-slate-700"
+              className="flex-1 min-w-0 px-3 py-2.5 border border-gray-300 rounded-r-lg outline-none dark:border-slate-600 dark:bg-slate-950"
             />
 
           </div>
@@ -223,17 +284,21 @@ const Settings = () => {
         {/* Email */}
         <div className="mt-6">
 
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
             Email Address
           </label>
 
           <input
+            id="email"
             type="email"
-            aria-label="Email Address"
             value={user.email}
             readOnly
-            className="w-full mt-2 p-3 border border-gray-200 rounded-lg bg-gray-50 dark:border-slate-700 dark:bg-slate-950"
+            className="w-full mt-2 px-3 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-500 cursor-not-allowed outline-none dark:border-slate-600 dark:bg-slate-950 dark:text-gray-400"
           />
+
+          <p className="text-xs text-gray-400 mt-1.5 dark:text-gray-500">
+            Signed in with {hasPassword ? "email and password" : "Google"}. Your email can't be changed here.
+          </p>
 
         </div>
 
@@ -241,127 +306,90 @@ const Settings = () => {
         <Message status={profileStatus} />
 
         {/* Save */}
-        <button
-          type="button"
-          onClick={handleSaveProfile}
-          disabled={busy === "profile" || !usernameChanged || ["checking", "invalid", "taken", "reserved"].includes(availability)}
-          className="mt-6 bg-slate-900 text-white px-5 py-3 rounded-lg hover:bg-slate-700 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-teal-600 dark:hover:bg-teal-700"
-        >
-          {busy === "profile" ? "Saving..." : "Save Changes"}
-        </button>
+        <div className="flex justify-end mt-6 pt-5 border-t border-gray-100 dark:border-slate-800">
+          <button
+            type="button"
+            onClick={handleSaveProfile}
+            disabled={busy === "profile" || !usernameChanged || ["checking", "invalid", "taken", "reserved"].includes(availability)}
+            className="bg-slate-900 text-white text-sm font-medium px-5 py-2.5 rounded-lg hover:bg-slate-700 disabled:opacity-60 disabled:cursor-not-allowed dark:bg-teal-600 dark:hover:bg-teal-700"
+          >
+            {busy === "profile" ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
 
-      </div>
-
-
-      {/* Account Settings */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mt-6 dark:bg-slate-900 dark:border-slate-700">
-
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          Account
-        </h2>
-
-        <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
-          Manage your account security.
-        </p>
+      </Section>
 
 
-        <div className="mt-6 space-y-4">
+      {/* Account */}
+      <Section
+        icon={HiOutlineShieldCheck}
+        title="Account & Security"
+        description="Manage how you sign in to Tied."
+      >
 
-          {/* Change Password */}
+        <div className="divide-y divide-gray-100 dark:divide-slate-800">
+
           {hasPassword && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg dark:border-slate-700">
-
-            <div>
-              <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                Password
-              </h3>
-
-              <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
-                We'll email you a link to set a new password.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleChangePassword}
-              disabled={busy === "password"}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-60 dark:border-slate-600 dark:hover:bg-slate-800"
-            >
-              {busy === "password" ? "Sending..." : "Change Password"}
-            </button>
-
-          </div>
+            <SettingRow title="Password" description="We'll email you a link to set a new password.">
+              <button
+                type="button"
+                onClick={handleChangePassword}
+                disabled={busy === "password"}
+                className={secondaryButton}
+              >
+                {busy === "password" ? "Sending..." : "Change Password"}
+              </button>
+            </SettingRow>
           )}
 
-
-          {/* Logout */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border border-gray-200 rounded-lg dark:border-slate-700">
-
-            <div>
-              <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                Sign Out
-              </h3>
-
-              <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
-                Sign out of your Tied account.
-              </p>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleSignOut}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 dark:border-slate-600 dark:hover:bg-slate-800"
-            >
+          <SettingRow title="Sign Out" description="Sign out of your Tied account on this device.">
+            <button type="button" onClick={handleSignOut} className={secondaryButton}>
               Sign Out
             </button>
-
-          </div>
+          </SettingRow>
 
         </div>
 
         <Message status={accountStatus} />
 
-      </div>
+      </Section>
+
+
+      {/* Help */}
+      <Section
+        icon={HiOutlineQuestionMarkCircle}
+        title="Help & Support"
+        description="New to Tied? Follow these steps to set up your profile, or find a quick answer below."
+      >
+        <HelpSection />
+      </Section>
 
 
       {/* Danger Zone */}
-      <div className="bg-white rounded-xl shadow-sm border border-red-200 p-6 mt-6 dark:bg-slate-900 dark:border-red-900">
+      <Section
+        icon={HiOutlineExclamation}
+        title="Danger Zone"
+        description="These actions are permanent and can't be undone."
+        danger
+      >
 
-        <h2 className="text-xl font-semibold text-red-600 dark:text-red-400">
-          Danger Zone
-        </h2>
-
-        <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
-          These actions can permanently affect your account.
-        </p>
-
-
-        <div className="mt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-
-          <div>
-            <h3 className="font-medium text-gray-900 dark:text-gray-100">
-              Delete Account
-            </h3>
-
-            <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
-              Permanently delete your Tied account and all associated data.
-            </p>
-          </div>
-
+        <SettingRow
+          title="Delete Account"
+          description="Permanently delete your Tied account, profile, links and analytics."
+        >
           <button
             type="button"
             onClick={handleDeleteAccount}
             disabled={busy === "delete"}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-60"
+            className="shrink-0 px-4 py-2 text-sm font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {busy === "delete" ? "Deleting..." : "Delete Account"}
           </button>
-
-        </div>
+        </SettingRow>
 
         <Message status={deleteStatus} />
 
-      </div>
+      </Section>
 
     </div>
   );
