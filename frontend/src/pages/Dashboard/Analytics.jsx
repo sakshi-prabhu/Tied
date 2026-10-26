@@ -1,7 +1,8 @@
 import { useState } from "react";
 import useAnalytics from "../../hooks/useAnalytics.js";
 import StatCard from "../../Dashboard/StatCard.jsx";
-import { CTR_INFO } from "../../Dashboard/statInfo.js";
+import { CTR_INFO, SOURCES_INFO } from "../../Dashboard/statInfo.js";
+import InfoTip from "../../Dashboard/InfoTip.jsx";
 import PerformanceChart, { SeriesLegend } from "../../Dashboard/PerformanceChart.jsx";
 
 const RANGES = [
@@ -146,9 +147,13 @@ const Analytics = () => {
             {/* Traffic Sources */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 dark:bg-slate-900 dark:border-slate-700">
 
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                Traffic Sources
-              </h2>
+              <div className="relative flex items-center gap-1.5">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                  Traffic Sources
+                </h2>
+
+                <InfoTip label="Traffic Sources" text={SOURCES_INFO} />
+              </div>
 
               <p className="text-sm text-gray-500 mt-1 dark:text-gray-400">
                 Where your visitors are coming from
