@@ -20,7 +20,9 @@ if (process.env.TRUST_PROXY) {
   app.set("trust proxy", Number(process.env.TRUST_PROXY) || process.env.TRUST_PROXY);
 }
 
-app.use(cors());
+// Comma-separated list of allowed frontend origins; allows any origin when unset (local dev)
+const corsOrigins = process.env.CORS_ORIGIN?.split(",").map((o) => o.trim()).filter(Boolean);
+app.use(cors(corsOrigins?.length ? { origin: corsOrigins } : undefined));
 app.use(express.json());
 
 app.use("/api/test", testRoutes);

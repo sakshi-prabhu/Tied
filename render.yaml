@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: tied-api
+    runtime: node
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/test
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: MONGO_URI
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        value: tied-ae4fa
+      - key: ANALYTICS_SECRET
+        generateValue: true
+      - key: TRUST_PROXY
+        value: "1"
+      - key: CORS_ORIGIN
+        sync: false
