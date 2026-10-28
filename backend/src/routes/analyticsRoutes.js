@@ -7,7 +7,31 @@ const router = express.Router();
 
 router.use(verifyToken, requireProfile);
 
-const ctr = (views, clicks) => (views ? Math.round((clicks / views) * 1000) / 10 : 0);
+// Click-through rate: the percentage of visits that led to at least one link click.
+// A visit is one visitor's profile view on one day, so a visitor tapping three links
+// still counts once and the rate can never go above 100%.
+const ctr = (views, clickedVisits) =>
+  views ? Math.min(Math.round((clickedVisits / views) * 1000) / 10, 100) : 0;
+
+// Number of visits (visitor + day) in [from, to) that include both a view and a click
+const countClickedVisits = async (user, from, to) => {
+  const [result] = await AnalyticsEvent.aggregate([
+    { $match: { user, visitor: { $type: "string" }, createdAt: { $gte: from, ...(to && { $lt: to }) } } },
+    {
+      $group: {
+        _id: {
+          visitor: "$visitor",
+          day: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+        },
+        types: { $addToSet: "$type" },
+      },
+    },
+    { $match: { types: { $all: ["view", "click"] } } },
+    { $count: "visits" },
+  ]);
+
+  return result?.visits || 0;
+};
 
 // Older events have no stored source, so work it out from their referrer
 const sourceName = ({ source, referrer }) => source || fromReferrer(referrer) || "Direct";
@@ -24,7 +48,7 @@ router.get("/", async (req, res) => {
   const previousSince = new Date(since);
   previousSince.setUTCDate(since.getUTCDate() - days);
 
-  const [daily, previous, referrers, links] = await Promise.all([
+  const [daily, previous, referrers, links, clickedVisits, previousClickedVisits] = await Promise.all([
     AnalyticsEvent.aggregate([
       { $match: { user: req.user._id, createdAt: { $gte: since } } },
       {
@@ -46,6 +70,8 @@ router.get("/", async (req, res) => {
       { $group: { _id: { source: "$source", referrer: "$referrer" }, count: { $sum: 1 } } },
     ]),
     Link.find({ user: req.user._id }).sort({ clicks: -1 }).select("title url clicks"),
+    countClickedVisits(req.user._id, since),
+    countClickedVisits(req.user._id, previousSince, since),
   ]);
 
   // Fill in every day so the chart has no gaps
@@ -81,11 +107,11 @@ router.get("/", async (req, res) => {
     .slice(0, 5);
 
   res.json({
-    period: { views, clicks, ctr: ctr(views, clicks) },
+    period: { views, clicks, ctr: ctr(views, clickedVisits) },
     previousPeriod: {
       views: previousViews,
       clicks: previousClicks,
-      ctr: ctr(previousViews, previousClicks),
+      ctr: ctr(previousViews, previousClickedVisits),
     },
     allTime: {
       views: req.user.profileViews,

@@ -58,7 +58,7 @@ const faqs = [
   {
     question: "What is click-through rate?",
     answer:
-      "It's the share of profile visits that ended in a link click. For example, 100 visitors and 25 clicks is a 25% click-through rate. Repeat clicks and bot traffic aren't counted.",
+      "It's the percentage of profile visits where the visitor tapped at least one of your links: visits with a click ÷ total visits × 100. For example, if 100 people visit and 25 of them tap a link, your click-through rate is 25%, even if some of them tap several links. So it's always between 0% and 100%. Each visitor counts once per day, and bot traffic isn't counted.",
   },
   {
     question: "Why can't I change my password?",

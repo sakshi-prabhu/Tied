@@ -1,9 +1,10 @@
 // Plain-language explanations shown behind the "?" on stat cards
 export const CTR_INFO =
-  "Click-through rate is the share of profile visits that ended in a link click. " +
-  "For example, 100 visitors and 25 link clicks is a 25% click-through rate. " +
-  "Higher means more visitors are finding a link worth tapping. " +
-  "Repeat clicks from the same person and bot traffic aren't counted.";
+  "Click-through rate is the percentage of profile visits where the visitor tapped at least one link: " +
+  "visits with a click ÷ total visits × 100. " +
+  "For example, if 100 people visit and 25 of them tap a link, it's 25%, even if some of them tap several links. " +
+  "It's always between 0% and 100%. Higher means more visitors are finding a link worth tapping. " +
+  "Each visitor counts once per day, and bot traffic isn't counted.";
 
 export const SOURCES_INFO =
   "Shows where your visitors came from: the app they opened your link in (like Instagram or TikTok), " +
