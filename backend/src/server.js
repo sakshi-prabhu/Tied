@@ -25,6 +25,12 @@ const corsOrigins = process.env.CORS_ORIGIN?.split(",").map((o) => o.trim()).fil
 app.use(cors(corsOrigins?.length ? { origin: corsOrigins } : undefined));
 app.use(express.json());
 
+// API data changes constantly (views, clicks), so never let browsers or proxies cache it
+app.use("/api", (req, res, next) => {
+  res.set("Cache-Control", "no-store");
+  next();
+});
+
 app.use("/api/test", testRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/links", linkRoutes);

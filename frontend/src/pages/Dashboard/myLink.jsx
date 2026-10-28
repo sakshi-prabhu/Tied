@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api, { getApiErrorMessage } from "../../services/api.js";
+import useAutoRefresh from "../../hooks/useAutoRefresh.js";
 import LinkIcon from "../../components/LinkIcon.jsx";
 
 const emptyForm = { title: "", url: "", icon: "" };
@@ -118,6 +119,12 @@ const MyLink = () => {
       .then((res) => setLinks(res.data))
       .catch((err) => setError(getApiErrorMessage(err)));
   }, []);
+
+  // Keep click counts current; skip while editing or dragging so the list doesn't jump
+  useAutoRefresh(() => {
+    if (adding || editingId || dragIndex !== null) return;
+    api.get("/links").then((res) => setLinks(res.data)).catch(() => {});
+  });
 
   // Runs an API call, showing its error message if it fails. Returns true on success.
   const run = async (request) => {
