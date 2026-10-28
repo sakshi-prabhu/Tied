@@ -37,11 +37,11 @@ const DashboardNavbar = ({ onMenuClick, sidebarOpen }) => {
       <div className="flex items-center gap-3">
         <ThemeToggle />
 
-        {/* Profile picture, opens the profile editor */}
+        {/* Profile picture, opens account settings */}
         <Link
-          to="/dashboard/appearance"
-          aria-label="Edit profile"
-          title="Edit profile"
+          to="/dashboard/settings"
+          aria-label="Settings"
+          title="Settings"
           className="shrink-0 rounded-full ring-2 ring-white/20 hover:ring-white/60 transition"
         >
           {profile?.avatarUrl ? (
