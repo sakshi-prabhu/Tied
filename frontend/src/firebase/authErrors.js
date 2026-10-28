@@ -11,6 +11,7 @@ const messages = {
   "auth/too-many-requests": "Too many attempts. Please try again later.",
   "auth/network-request-failed": "Network error. Check your connection.",
   "auth/popup-blocked": "Popup was blocked. Please allow popups and try again.",
+  "auth/user-mismatch": "That Google account is different from the one you signed in with.",
 };
 
 export const getAuthErrorMessage = (error) =>

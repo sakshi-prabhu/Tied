@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { deleteUser, sendPasswordResetEmail, signOut } from "firebase/auth";
-import { auth } from "../../firebase/firebaseConfig.js";
-import { getAuthErrorMessage } from "../../firebase/authErrors.js";
+import {
+  EmailAuthProvider,
+  deleteUser,
+  reauthenticateWithCredential,
+  reauthenticateWithPopup,
+  sendPasswordResetEmail,
+  signOut,
+} from "firebase/auth";
+import { auth, googleProvider } from "../../firebase/firebaseConfig.js";
+import { getAuthErrorMessage, isPopupClosed } from "../../firebase/authErrors.js";
 import { useAuth } from "../../context/AuthContext.jsx";
 import api, { getApiErrorMessage } from "../../services/api.js";
 import { profileUrl, profileUrlPrefix, USERNAME_PATTERN } from "../../utils/profileUrl.js";
@@ -100,6 +107,8 @@ const Settings = () => {
   const [accountStatus, setAccountStatus] = useState({ type: "", message: "" });
   const [deleteStatus, setDeleteStatus] = useState({ type: "", message: "" });
   const [busy, setBusy] = useState("");
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
   // Server answer for the last username we checked: { username, result }
   const [checked, setChecked] = useState({ username: "", result: "" });
 
@@ -185,40 +194,57 @@ const Settings = () => {
     navigate("/signin");
   };
 
-  const handleDeleteAccount = async () => {
-    if (!window.confirm("Delete your Tied account? Your profile, links and analytics will be permanently removed.")) {
-      return;
-    }
+  // Firebase only lets an account be deleted shortly after signing in, so the user
+  // confirms who they are first (password, or the Google popup)
+  const reauthenticate = () =>
+    hasPassword
+      ? reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, deletePassword))
+      : reauthenticateWithPopup(user, googleProvider);
+
+  const handleDeleteAccount = async (e) => {
+    e.preventDefault();
 
     setBusy("delete");
     setDeleteStatus({ type: "", message: "" });
 
     try {
-      // Grab a token first — it stays valid for the API call after the Firebase account is gone
-      const token = await user.getIdToken();
-
-      // Deleting the Firebase account first means nothing is lost if Firebase refuses
-      await deleteUser(user);
-      await api.delete("/users/me", { headers: { Authorization: `Bearer ${token}` } });
-      navigate("/");
+      await reauthenticate();
     } catch (err) {
-      if (err.code === "auth/requires-recent-login") {
+      if (!isPopupClosed(err)) {
         setDeleteStatus({
           type: "error",
-          message: "For security, please sign out and sign back in, then try deleting your account again.",
-        });
-      } else {
-        setDeleteStatus({
-          type: "error",
-          message: err.isAxiosError ? getApiErrorMessage(err) : getAuthErrorMessage(err),
+          message: hasPassword && err.code === "auth/invalid-credential" ? "Incorrect password." : getAuthErrorMessage(err),
         });
       }
       setBusy("");
+      return;
     }
+
+    // Data first: if this fails nothing is lost and the user can simply try again.
+    // (Deleting the login first would sign them out and leave the public profile online.)
+    try {
+      await api.delete("/users/me");
+    } catch (err) {
+      setDeleteStatus({ type: "error", message: getApiErrorMessage(err) });
+      setBusy("");
+      return;
+    }
+
+    try {
+      await deleteUser(user);
+    } catch {
+      // The profile is already gone; just make sure they end up signed out
+      await signOut(auth).catch(() => {});
+    }
+
+    navigate("/", { replace: true });
   };
 
   const secondaryButton =
     "shrink-0 px-4 py-2 text-sm font-medium border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 disabled:opacity-60 disabled:cursor-not-allowed dark:border-slate-600 dark:text-gray-200 dark:hover:bg-slate-800";
+
+  const dangerButton =
+    "shrink-0 px-4 py-2 text-sm font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed";
 
   return (
     <div className="max-w-4xl">
@@ -377,15 +403,70 @@ const Settings = () => {
           title="Delete Account"
           description="Permanently delete your Tied account, profile, links and analytics."
         >
-          <button
-            type="button"
-            onClick={handleDeleteAccount}
-            disabled={busy === "delete"}
-            className="shrink-0 px-4 py-2 text-sm font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {busy === "delete" ? "Deleting..." : "Delete Account"}
-          </button>
+          {!confirmingDelete && (
+            <button
+              type="button"
+              onClick={() => setConfirmingDelete(true)}
+              className={dangerButton}
+            >
+              Delete Account
+            </button>
+          )}
         </SettingRow>
+
+        {confirmingDelete && (
+          <form
+            onSubmit={handleDeleteAccount}
+            className="mt-4 rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950/30"
+          >
+            <p className="text-sm text-red-700 dark:text-red-300">
+              Your profile at <span className="font-medium">{profileUrl(profile.username)}</span>, all your
+              links and analytics will be permanently deleted. This can't be undone.
+            </p>
+
+            {hasPassword && (
+              <label className="block mt-4">
+                <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                  Enter your password to confirm
+                </span>
+                <input
+                  type="password"
+                  autoComplete="current-password"
+                  value={deletePassword}
+                  onChange={(e) => setDeletePassword(e.target.value)}
+                  required
+                  autoFocus
+                  className="mt-2 w-full sm:max-w-xs px-3 py-2 rounded-lg border border-gray-300 bg-white outline-none focus:border-red-500 dark:bg-slate-950 dark:border-slate-700 dark:text-gray-100"
+                />
+              </label>
+            )}
+
+            <div className="flex flex-wrap gap-3 mt-4">
+              <button
+                type="submit"
+                disabled={busy === "delete" || (hasPassword && !deletePassword)}
+                className={dangerButton}
+              >
+                {busy === "delete"
+                  ? "Deleting..."
+                  : hasPassword ? "Permanently Delete" : "Confirm with Google & Delete"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmingDelete(false);
+                  setDeletePassword("");
+                  setDeleteStatus({ type: "", message: "" });
+                }}
+                disabled={busy === "delete"}
+                className={secondaryButton}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
 
         <Message status={deleteStatus} />
 
