@@ -3,6 +3,21 @@ import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import api from "../services/api.js";
 import ProfileView from "../components/ProfileView.jsx";
 
+// A random ID kept in this browser so analytics counts the same visitor once a day,
+// even when their IP changes (common on mobile data). Not tied to any personal data.
+const getVisitorId = () => {
+  try {
+    let id = localStorage.getItem("tied_visitor");
+    if (!id) {
+      id = crypto.randomUUID();
+      localStorage.setItem("tied_visitor", id);
+    }
+    return id;
+  } catch {
+    return undefined;
+  }
+};
+
 // The page visitors see at /<username>
 const PublicProfile = () => {
   const { username } = useParams();
@@ -15,6 +30,7 @@ const PublicProfile = () => {
   // visitor came from. Read once, since the address bar is cleaned up below.
   const [searchParams, setSearchParams] = useSearchParams();
   const ref = useRef(searchParams.get("ref") || searchParams.get("utm_source") || "");
+  const visitorId = useRef(getVisitorId());
 
   useEffect(() => {
     api
@@ -32,7 +48,7 @@ const PublicProfile = () => {
         if (!viewRecorded.current) {
           viewRecorded.current = true;
           api
-            .post(`/public/${username}/view`, { referrer: document.referrer, ref: ref.current })
+            .post(`/public/${username}/view`, { referrer: document.referrer, ref: ref.current, visitorId: visitorId.current })
             .catch(() => {});
 
           // So a visitor who copies the link from the address bar doesn't pass the tag on
@@ -50,7 +66,11 @@ const PublicProfile = () => {
   // Record the click; the browser opens the link as usual
   const handleLinkClick = (e, link) => {
     api
-      .post(`/public/links/${link._id}/click`, { referrer: document.referrer, ref: ref.current })
+      .post(`/public/links/${link._id}/click`, {
+        referrer: document.referrer,
+        ref: ref.current,
+        visitorId: visitorId.current,
+      })
       .catch(() => {});
   };
 

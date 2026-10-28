@@ -1,7 +1,7 @@
 import { useAuth } from "../context/AuthContext.jsx";
 import useAnalytics from "../hooks/useAnalytics.js";
 import StatCard from "./StatCard.jsx";
-import { CTR_INFO } from "./statInfo.js";
+import { CLICKS_INFO, CTR_INFO, VIEWS_INFO } from "./statInfo.js";
 import PerformanceChart, { SeriesLegend } from "./PerformanceChart.jsx";
 import ProfileCard from "./ProfileCard.jsx";
 
@@ -37,12 +37,14 @@ const Overview = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
             <StatCard
               label="Profile Views"
+              info={VIEWS_INFO}
               value={data.period.views}
               current={data.period.views}
               previous={data.previousPeriod.views}
             />
             <StatCard
               label="Link Clicks"
+              info={CLICKS_INFO}
               value={data.period.clicks}
               current={data.period.clicks}
               previous={data.previousPeriod.clicks}

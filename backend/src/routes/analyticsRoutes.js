@@ -7,31 +7,38 @@ const router = express.Router();
 
 router.use(verifyToken, requireProfile);
 
-// Click-through rate: the percentage of visits that led to at least one link click.
-// A visit is one visitor's profile view on one day, so a visitor tapping three links
-// still counts once and the rate can never go above 100%.
-const ctr = (views, clickedVisits) =>
-  views ? Math.min(Math.round((clickedVisits / views) * 1000) / 10, 100) : 0;
+// Views, clicks and CTR are all counted in visits: one visitor on one day.
+// A visit counts once towards "views" if they opened the profile, and once towards
+// "clicks" if they tapped any link, however many links they tapped. Per-link totals
+// (each link once per visitor per day) are what "Top links" shows.
+const ctr = (views, clickedViews) =>
+  views ? Math.min(Math.round((clickedViews / views) * 1000) / 10, 100) : 0;
 
-// Number of visits (visitor + day) in [from, to) that include both a view and a click
-const countClickedVisits = async (user, from, to) => {
-  const [result] = await AnalyticsEvent.aggregate([
-    { $match: { user, visitor: { $type: "string" }, createdAt: { $gte: from, ...(to && { $lt: to }) } } },
+// Visit counts per day in [from, to): views, clicks, and visits with both (for CTR)
+const dailyVisits = (user, from, to) =>
+  AnalyticsEvent.aggregate([
+    { $match: { user, createdAt: { $gte: from, ...(to && { $lt: to }) } } },
     {
       $group: {
         _id: {
-          visitor: "$visitor",
-          day: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          // Events from before deduplication have no visitor, so each stands alone
+          visitor: { $ifNull: ["$visitor", "$_id"] },
+          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
         },
         types: { $addToSet: "$type" },
       },
     },
-    { $match: { types: { $all: ["view", "click"] } } },
-    { $count: "visits" },
+    {
+      $group: {
+        _id: "$_id.date",
+        views: { $sum: { $cond: [{ $in: ["view", "$types"] }, 1, 0] } },
+        clicks: { $sum: { $cond: [{ $in: ["click", "$types"] }, 1, 0] } },
+        clickedViews: { $sum: { $cond: [{ $setIsSubset: [["view", "click"], "$types"] }, 1, 0] } },
+      },
+    },
   ]);
 
-  return result?.visits || 0;
-};
+const total = (rows, key) => rows.reduce((sum, row) => sum + row[key], 0);
 
 // Older events have no stored source, so work it out from their referrer
 const sourceName = ({ source, referrer }) => source || fromReferrer(referrer) || "Direct";
@@ -48,30 +55,14 @@ router.get("/", async (req, res) => {
   const previousSince = new Date(since);
   previousSince.setUTCDate(since.getUTCDate() - days);
 
-  const [daily, previous, referrers, links, clickedVisits, previousClickedVisits] = await Promise.all([
-    AnalyticsEvent.aggregate([
-      { $match: { user: req.user._id, createdAt: { $gte: since } } },
-      {
-        $group: {
-          _id: {
-            date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-            type: "$type",
-          },
-          count: { $sum: 1 },
-        },
-      },
-    ]),
-    AnalyticsEvent.aggregate([
-      { $match: { user: req.user._id, createdAt: { $gte: previousSince, $lt: since } } },
-      { $group: { _id: "$type", count: { $sum: 1 } } },
-    ]),
+  const [daily, previous, referrers, links] = await Promise.all([
+    dailyVisits(req.user._id, since),
+    dailyVisits(req.user._id, previousSince, since),
     AnalyticsEvent.aggregate([
       { $match: { user: req.user._id, type: "view", createdAt: { $gte: since } } },
       { $group: { _id: { source: "$source", referrer: "$referrer" }, count: { $sum: 1 } } },
     ]),
     Link.find({ user: req.user._id }).sort({ clicks: -1 }).select("title url clicks"),
-    countClickedVisits(req.user._id, since),
-    countClickedVisits(req.user._id, previousSince, since),
   ]);
 
   // Fill in every day so the chart has no gaps
@@ -83,17 +74,12 @@ router.get("/", async (req, res) => {
   }
 
   const byDate = Object.fromEntries(series.map((day) => [day.date, day]));
-  for (const { _id, count } of daily) {
-    if (byDate[_id.date]) {
-      byDate[_id.date][_id.type === "view" ? "views" : "clicks"] = count;
-    }
+  for (const { _id, views, clicks } of daily) {
+    if (byDate[_id]) Object.assign(byDate[_id], { views, clicks });
   }
 
-  const views = series.reduce((sum, day) => sum + day.views, 0);
-  const clicks = series.reduce((sum, day) => sum + day.clicks, 0);
-
-  const previousViews = previous.find((p) => p._id === "view")?.count || 0;
-  const previousClicks = previous.find((p) => p._id === "click")?.count || 0;
+  const views = total(daily, "views");
+  const clicks = total(daily, "clicks");
 
   // Several referrer URLs can map to the same source, so merge by name
   const sourceCounts = {};
@@ -107,11 +93,11 @@ router.get("/", async (req, res) => {
     .slice(0, 5);
 
   res.json({
-    period: { views, clicks, ctr: ctr(views, clickedVisits) },
+    period: { views, clicks, ctr: ctr(views, total(daily, "clickedViews")) },
     previousPeriod: {
-      views: previousViews,
-      clicks: previousClicks,
-      ctr: ctr(previousViews, previousClickedVisits),
+      views: total(previous, "views"),
+      clicks: total(previous, "clicks"),
+      ctr: ctr(total(previous, "views"), total(previous, "clickedViews")),
     },
     allTime: {
       views: req.user.profileViews,

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useAnalytics from "../../hooks/useAnalytics.js";
 import StatCard from "../../Dashboard/StatCard.jsx";
-import { CTR_INFO, SOURCES_INFO } from "../../Dashboard/statInfo.js";
+import { CLICKS_INFO, CTR_INFO, VIEWS_INFO, SOURCES_INFO } from "../../Dashboard/statInfo.js";
 import InfoTip from "../../Dashboard/InfoTip.jsx";
 import PerformanceChart, { SeriesLegend } from "../../Dashboard/PerformanceChart.jsx";
 
@@ -65,12 +65,14 @@ const Analytics = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
             <StatCard
               label="Profile Views"
+              info={VIEWS_INFO}
               value={data.period.views}
               current={data.period.views}
               previous={data.previousPeriod.views}
             />
             <StatCard
               label="Link Clicks"
+              info={CLICKS_INFO}
               value={data.period.clicks}
               current={data.period.clicks}
               previous={data.previousPeriod.clicks}

@@ -36,7 +36,12 @@ const recordEvent = async (req, { user, link, type }) => {
   });
   if (recent >= FLOOD_LIMIT) return false;
 
-  const visitor = hash(`${ip}|${userAgent}`);
+  // The public page sends a random ID it keeps in the browser, which stays the same when
+  // a phone's IP changes. Without one (storage blocked), fall back to IP + browser.
+  const visitorId = typeof req.body?.visitorId === "string" && /^[a-z0-9-]{16,64}$/i.test(req.body.visitorId)
+    ? req.body.visitorId
+    : null;
+  const visitor = hash(visitorId ? `id|${visitorId}` : `${ip}|${userAgent}`);
   const day = new Date().toISOString().slice(0, 10);
 
   try {
