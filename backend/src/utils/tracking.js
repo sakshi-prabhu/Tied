@@ -1,9 +1,12 @@
 const crypto = require("crypto");
 const { AnalyticsEvent } = require("../models");
+const { detectSource } = require("./source");
 
-// Crawlers, link-preview fetchers and scripted HTTP clients
+// Crawlers, link-preview fetchers and scripted HTTP clients. WhatsApp's preview fetcher
+// starts with "WhatsApp/" and Telegram's is "TelegramBot"; real visitors from Telegram's
+// in-app browser also mention Telegram, so it must not be matched on its own.
 const BOT_UA =
-  /bot|crawl|spider|slurp|preview|facebookexternalhit|embedly|whatsapp|telegram|curl|wget|python|axios|node-fetch|go-http|java\/|okhttp|headless|phantom|puppeteer|playwright|selenium|lighthouse/i;
+  /bot|crawl|spider|slurp|preview|facebookexternalhit|embedly|^whatsapp|curl|wget|python|axios|node-fetch|go-http|java\/|okhttp|headless|phantom|puppeteer|playwright|selenium|lighthouse/i;
 
 // More unique events than this from one IP in the window is treated as automated
 const FLOOD_WINDOW_MS = 10 * 60 * 1000;
@@ -42,6 +45,7 @@ const recordEvent = async (req, { user, link, type }) => {
       link,
       type,
       referrer: req.body?.referrer || "",
+      source: detectSource({ ref: req.body?.ref, userAgent, referrer: req.body?.referrer }),
       visitor,
       ipHash,
       dedupeKey: `${type}:${link || user}:${visitor}:${day}`,

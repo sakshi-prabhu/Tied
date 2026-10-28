@@ -6,7 +6,9 @@ export const CTR_INFO =
   "Repeat clicks from the same person and bot traffic aren't counted.";
 
 export const SOURCES_INFO =
-  "Shows which website each visitor was on right before opening your profile. " +
-  "\"Direct\" means the visitor's browser didn't say where they came from: they typed or pasted your link, " +
-  "used a bookmark or QR code, or opened it inside an app like Instagram, WhatsApp or Substack. " +
+  "Shows where your visitors came from: the app they opened your link in (like Instagram or TikTok), " +
+  "or the website they were on. Links shared with the buttons on your Overview page are tagged, " +
+  "so visits from WhatsApp, email and other apps are recognised too. " +
+  "\"Direct\" means nothing said where the visitor came from: they typed or pasted your link, " +
+  "used a bookmark, or opened an untagged link from a messaging app. " +
   "Each new visit adds to its source, so the percentages change over time.";

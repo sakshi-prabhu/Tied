@@ -25,6 +25,9 @@ const analyticsEventSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    // Display name like "WhatsApp" or "Direct" (see utils/source.js).
+    // Missing on events recorded before source detection; those fall back to the referrer.
+    source: String,
     // Hashed IP + user agent; raw IPs are never stored
     visitor: String,
     // Hashed IP alone, for spotting floods from one address

@@ -1,6 +1,7 @@
 const express = require("express");
 const { Link, AnalyticsEvent } = require("../models");
 const { verifyToken, requireProfile } = require("../middleware/auth");
+const { fromReferrer } = require("../utils/source");
 
 const router = express.Router();
 
@@ -8,14 +9,8 @@ router.use(verifyToken, requireProfile);
 
 const ctr = (views, clicks) => (views ? Math.round((clicks / views) * 1000) / 10 : 0);
 
-// "https://www.instagram.com/foo" -> "instagram.com", "" -> "Direct"
-const sourceName = (referrer) => {
-  try {
-    return new URL(referrer).hostname.replace(/^www\./, "");
-  } catch {
-    return "Direct";
-  }
-};
+// Older events have no stored source, so work it out from their referrer
+const sourceName = ({ source, referrer }) => source || fromReferrer(referrer) || "Direct";
 
 // GET /api/analytics?days=7 — period totals vs the previous period, daily series,
 // top links and traffic sources
@@ -48,7 +43,7 @@ router.get("/", async (req, res) => {
     ]),
     AnalyticsEvent.aggregate([
       { $match: { user: req.user._id, type: "view", createdAt: { $gte: since } } },
-      { $group: { _id: "$referrer", count: { $sum: 1 } } },
+      { $group: { _id: { source: "$source", referrer: "$referrer" }, count: { $sum: 1 } } },
     ]),
     Link.find({ user: req.user._id }).sort({ clicks: -1 }).select("title url clicks"),
   ]);
@@ -74,7 +69,7 @@ router.get("/", async (req, res) => {
   const previousViews = previous.find((p) => p._id === "view")?.count || 0;
   const previousClicks = previous.find((p) => p._id === "click")?.count || 0;
 
-  // Several referrer URLs can map to the same site, so merge by hostname
+  // Several referrer URLs can map to the same source, so merge by name
   const sourceCounts = {};
   for (const { _id, count } of referrers) {
     const name = sourceName(_id);

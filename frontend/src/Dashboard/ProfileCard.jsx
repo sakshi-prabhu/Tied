@@ -14,15 +14,18 @@ const ProfileCard = () => {
   const name = profile.displayName || profile.username;
   const text = `Check out ${name} on Tied`;
 
-  const encodedUrl = encodeURIComponent(url);
   const encodedText = encodeURIComponent(text);
 
+  // Each share button tags the link (?ref=whatsapp) so Analytics can show where visitors
+  // came from; apps like WhatsApp open links without saying where they were clicked
+  const tagged = (ref) => encodeURIComponent(`${url}?ref=${ref}`);
+
   const shareTargets = [
-    { label: "WhatsApp", icon: FaWhatsapp, href: `https://wa.me/?text=${encodedText}%20${encodedUrl}` },
-    { label: "X", icon: FaXTwitter, href: `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}` },
-    { label: "LinkedIn", icon: FaLinkedinIn, href: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}` },
-    { label: "Facebook", icon: FaFacebookF, href: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}` },
-    { label: "Email", icon: HiOutlineMail, href: `mailto:?subject=${encodedText}&body=${encodedUrl}` },
+    { label: "WhatsApp", icon: FaWhatsapp, href: `https://wa.me/?text=${encodedText}%20${tagged("whatsapp")}` },
+    { label: "X", icon: FaXTwitter, href: `https://twitter.com/intent/tweet?text=${encodedText}&url=${tagged("x")}` },
+    { label: "LinkedIn", icon: FaLinkedinIn, href: `https://www.linkedin.com/sharing/share-offsite/?url=${tagged("linkedin")}` },
+    { label: "Facebook", icon: FaFacebookF, href: `https://www.facebook.com/sharer/sharer.php?u=${tagged("facebook")}` },
+    { label: "Email", icon: HiOutlineMail, href: `mailto:?subject=${encodedText}&body=${tagged("email")}` },
   ];
 
   const handleCopy = async () => {

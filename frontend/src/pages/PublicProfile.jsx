@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import api from "../services/api.js";
 import ProfileView from "../components/ProfileView.jsx";
 
@@ -10,6 +10,11 @@ const PublicProfile = () => {
   const [profile, setProfile] = useState(null);
   const [notFound, setNotFound] = useState(false);
   const viewRecorded = useRef(false);
+
+  // ?ref=whatsapp (added by the dashboard's share buttons) tells analytics where the
+  // visitor came from. Read once, since the address bar is cleaned up below.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const ref = useRef(searchParams.get("ref") || searchParams.get("utm_source") || "");
 
   useEffect(() => {
     api
@@ -26,15 +31,27 @@ const PublicProfile = () => {
         // Count each page load once (StrictMode runs effects twice in dev)
         if (!viewRecorded.current) {
           viewRecorded.current = true;
-          api.post(`/public/${username}/view`, { referrer: document.referrer }).catch(() => {});
+          api
+            .post(`/public/${username}/view`, { referrer: document.referrer, ref: ref.current })
+            .catch(() => {});
+
+          // So a visitor who copies the link from the address bar doesn't pass the tag on
+          if (searchParams.has("ref")) {
+            const cleaned = new URLSearchParams(searchParams);
+            cleaned.delete("ref");
+            setSearchParams(cleaned, { replace: true });
+          }
         }
       })
       .catch(() => setNotFound(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only refetch when the profile changes
   }, [username, navigate]);
 
   // Record the click; the browser opens the link as usual
   const handleLinkClick = (e, link) => {
-    api.post(`/public/links/${link._id}/click`, { referrer: document.referrer }).catch(() => {});
+    api
+      .post(`/public/links/${link._id}/click`, { referrer: document.referrer, ref: ref.current })
+      .catch(() => {});
   };
 
   if (notFound) {
