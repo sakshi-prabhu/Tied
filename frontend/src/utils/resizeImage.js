@@ -1,10 +1,13 @@
-// Center-crops an image file to a square and scales it down, returning a JPEG blob.
+// Crops an image file to a square and scales it down, returning a JPEG blob.
 // Keeps uploads small no matter how big the original photo is.
-const resizeImage = async (file, size = 400) => {
+// crop is { x, y, side } in the original image's pixels; without it the center square is used.
+const resizeImage = async (file, size = 400, crop) => {
   const bitmap = await createImageBitmap(file);
 
-  const side = Math.min(bitmap.width, bitmap.height);
-  const output = Math.min(size, side);
+  const side = crop ? crop.side : Math.min(bitmap.width, bitmap.height);
+  const x = crop ? crop.x : (bitmap.width - side) / 2;
+  const y = crop ? crop.y : (bitmap.height - side) / 2;
+  const output = Math.round(Math.min(size, side));
 
   const canvas = document.createElement("canvas");
   canvas.width = output;
@@ -14,17 +17,7 @@ const resizeImage = async (file, size = 400) => {
   // JPEG has no transparency, so give transparent PNGs a white background
   ctx.fillStyle = "#ffffff";
   ctx.fillRect(0, 0, output, output);
-  ctx.drawImage(
-    bitmap,
-    (bitmap.width - side) / 2,
-    (bitmap.height - side) / 2,
-    side,
-    side,
-    0,
-    0,
-    output,
-    output
-  );
+  ctx.drawImage(bitmap, x, y, side, side, 0, 0, output, output);
   bitmap.close();
 
   return new Promise((resolve, reject) =>

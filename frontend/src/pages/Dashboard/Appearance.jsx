@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import api, { getApiErrorMessage } from "../../services/api.js";
 import ProfileView from "../../components/ProfileView.jsx";
+import ImageCropper from "../../components/ImageCropper.jsx";
 import resizeImage from "../../utils/resizeImage.js";
 
 const THEME_OPTIONS = [
@@ -48,6 +49,7 @@ const Appearance = () => {
   const [saving, setSaving] = useState(false);
   const [imageStatus, setImageStatus] = useState({ type: "", message: "" });
   const [imageBusy, setImageBusy] = useState(false);
+  const [cropFile, setCropFile] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -71,8 +73,8 @@ const Appearance = () => {
     ([key, value]) => form.appearance[key] === value
   );
 
-  // The picture saves right away, separately from "Save Changes"
-  const handleImageChange = async (e) => {
+  // Opens the cropper; the upload happens once the user applies the crop
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     e.target.value = "";
     if (!file) return;
@@ -82,11 +84,23 @@ const Appearance = () => {
       return;
     }
 
-    setImageBusy(true);
     setImageStatus({ type: "", message: "" });
+    setCropFile(file);
+  };
+
+  const handleCropError = () => {
+    setCropFile(null);
+    setImageStatus({ type: "error", message: "We couldn't read that image. Try a JPEG or PNG." });
+  };
+
+  // The picture saves right away, separately from "Save Changes"
+  const handleCropConfirm = async (crop) => {
+    const file = cropFile;
+    setCropFile(null);
+    setImageBusy(true);
 
     try {
-      const image = await resizeImage(file);
+      const image = await resizeImage(file, 400, crop);
       const { data } = await api.put("/users/me/avatar", image, {
         headers: { "Content-Type": "image/jpeg" },
       });
@@ -209,6 +223,15 @@ const Appearance = () => {
               </div>
 
             </div>
+
+            {cropFile && (
+              <ImageCropper
+                file={cropFile}
+                onCancel={() => setCropFile(null)}
+                onConfirm={handleCropConfirm}
+                onError={handleCropError}
+              />
+            )}
 
             {imageStatus.message && (
               <p className={`mt-3 text-sm ${imageStatus.type === "error" ? "text-red-600" : "text-green-600"}`}>
