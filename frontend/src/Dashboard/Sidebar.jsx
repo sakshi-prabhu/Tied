@@ -2,9 +2,9 @@ import { NavLink } from "react-router-dom";
 
 const menuItems = [
   { label: "Overview", to: "/dashboard", end: true },
+  { label: "Appearance", to: "/dashboard/appearance" },
   { label: "My Links", to: "/dashboard/mylinks" },
   { label: "Analytics", to: "/dashboard/analytics" },
-  { label: "Appearance", to: "/dashboard/appearance" },
   { label: "Settings", to: "/dashboard/settings" },
 ];
 
